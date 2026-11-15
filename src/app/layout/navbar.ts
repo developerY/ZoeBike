@@ -35,7 +35,7 @@ import {ZoeState} from '../services/zoe-state';
           >
             <img
               alt="ZoeBike Logo"
-              class="h-8 w-auto object-contain"
+              class="h-9 w-9 rounded-xl object-cover shadow-xs ring-1 ring-outline-variant/40"
               [src]="images.logo"
               referrerpolicy="no-referrer"
             />

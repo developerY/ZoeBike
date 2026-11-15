@@ -1,5 +1,5 @@
 export const ZOE_IMAGES = {
-  logo: 'https://lh3.googleusercontent.com/aida/ALJJyrCe4YMywYug0Y-MpkVAjE9AstKXnnxLVBsV1NCZSoczqqWBYGCftM92RaQRlZJjOIsqylP3hrbLJ_p2vchR2JhnrtPoHZ-ogWSeiVBT6YCIz8QBayeD_ulYULdhXuTtGvTVRVyr5O-YYXM-ESYBcfz-oGuFW-d2V-LpkOapf6eAzvVqgl4aIRSANstGUpfpdKSol70_MmkvfEEaLEJBr8KGmfmloovq8VyVVjVO9SON',
+  logo: '/assets/aistudio/image_94c7969d.png',
   profileAvatar:
     'https://lh3.googleusercontent.com/aida-public/AB6AXuB-3vML-0fd-J4Dv0CEo4U_WDK8KIU1I2S-1nBEdNBF5rtmt0b3GHmis9XjLY8mUCK7r3GACuslkdpBsG3xRIvrFwOxoipIy3mw1a_ERUlPKFm4us7yOYViJDHsO12ZbSOrI1PhCPnlnvOPUIDxU3Na2Jk-_S5l6tTTxD9KkROAV4bYvHS5GhHhYg1rv3dRYaVip2pguxV3B5F763aLwGzsfu2R4wa4WBXzq5S55T0',
   heroBike:

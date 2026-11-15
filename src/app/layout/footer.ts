@@ -18,7 +18,7 @@ import {ZoeState} from '../services/zoe-state';
             <div class="flex items-center gap-3">
               <img
                 alt="ZoeBike Logo"
-                class="h-7 w-auto object-contain"
+                class="h-8 w-8 rounded-xl object-cover shadow-xs ring-1 ring-outline-variant/40"
                 [src]="images.logo"
                 referrerpolicy="no-referrer"
               />
