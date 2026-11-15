@@ -566,6 +566,20 @@ export class GlobalOverlays {
       icon: 'all_inclusive',
       route: '/tech',
     },
+    {
+      title: 'About ZoeBike AI & Mission',
+      subtitle: 'Sub-8 ms neural torque assist, gentle routing & carbon-neutral craft',
+      category: 'Company',
+      icon: 'auto_awesome',
+      route: '/about',
+    },
+    {
+      title: 'AI Ride Profile Simulator',
+      subtitle: 'Preview Eco Glide, City Flow & Hill Assist neural calibrations',
+      category: 'Company',
+      icon: 'psychology',
+      route: '/about',
+    },
     ...RIDER_STORIES.map((s) => ({
       title: s.title,
       subtitle: `${s.name} · ${s.city}`,

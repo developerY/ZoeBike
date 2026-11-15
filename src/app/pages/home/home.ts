@@ -171,6 +171,53 @@ import {ZoeState} from '../../services/zoe-state';
         </div>
       </section>
 
+      <!-- ZOEBIKE AI MISSION BANNER -->
+      <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 pt-10">
+        <div
+          class="relative rounded-[2rem] overflow-hidden shadow-lg bg-inverse-surface grid grid-cols-1 lg:grid-cols-12 items-center"
+        >
+          <div class="lg:col-span-6 relative h-56 sm:h-64 lg:h-full min-h-[240px]">
+            <img
+              [src]="images.aboutBanner"
+              alt="ZoeBike cosmic cycling horizon banner"
+              class="w-full h-full object-cover object-center"
+              referrerpolicy="no-referrer"
+            />
+            <div
+              class="hidden lg:block absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-inverse-surface to-transparent"
+            ></div>
+            <div
+              class="lg:hidden absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-inverse-surface to-transparent"
+            ></div>
+          </div>
+
+          <div class="lg:col-span-6 p-6 sm:p-8 lg:p-10 flex flex-col items-start gap-3">
+            <span
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-on-primary text-label-sm uppercase tracking-wider"
+            >
+              <mat-icon class="material-symbols-outlined text-[14px]">auto_awesome</mat-icon>
+              <span>Intelligence in Motion</span>
+            </span>
+            <h2 class="text-headline-md text-inverse-on-surface tracking-tight">
+              Meet ZoeBike AI — Neural Torque &amp; Gentle Routing
+            </h2>
+            <p class="text-body-sm text-inverse-on-surface/80 max-w-xl">
+              Discover how our on-bike edge intelligence reads hills, wind, and traffic flow in
+              under 8 ms to turn every city ride into a calm daily sanctuary.
+            </p>
+            <div class="pt-1">
+              <a
+                routerLink="/about"
+                class="px-6 py-3 rounded-full bg-surface-container-lowest text-on-surface text-label-lg hover:bg-primary-fixed transition-all inline-flex items-center gap-2 whitespace-nowrap"
+              >
+                <span>Read Our AI Story</span>
+                <mat-icon class="material-symbols-outlined text-[18px]">arrow_forward</mat-icon>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- FLAGSHIP MODELS SHOWCASE -->
       <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 py-14">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">

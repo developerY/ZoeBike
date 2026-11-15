@@ -1,5 +1,7 @@
 export const ZOE_IMAGES = {
   logo: '/assets/aistudio/image_94c7969d.png',
+  aboutBanner: '/assets/aistudio/image_8bdb0e83.png',
+  footerBanner: '/assets/aistudio/image_b45294be.png',
   profileAvatar:
     'https://lh3.googleusercontent.com/aida-public/AB6AXuB-3vML-0fd-J4Dv0CEo4U_WDK8KIU1I2S-1nBEdNBF5rtmt0b3GHmis9XjLY8mUCK7r3GACuslkdpBsG3xRIvrFwOxoipIy3mw1a_ERUlPKFm4us7yOYViJDHsO12ZbSOrI1PhCPnlnvOPUIDxU3Na2Jk-_S5l6tTTxD9KkROAV4bYvHS5GhHhYg1rv3dRYaVip2pguxV3B5F763aLwGzsfu2R4wa4WBXzq5S55T0',
   heroBike:

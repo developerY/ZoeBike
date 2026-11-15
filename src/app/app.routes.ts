@@ -22,6 +22,11 @@ export const routes: Routes = [
     title: 'ZoeBike — Zoe Club & Stories',
   },
   {
+    path: 'about',
+    loadComponent: () => import('./pages/about/about').then((m) => m.About),
+    title: 'ZoeBike — About Our AI Mobility Mission',
+  },
+  {
     path: '**',
     redirectTo: '',
   },

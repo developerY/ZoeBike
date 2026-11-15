@@ -56,30 +56,37 @@ import {ZoeState} from '../services/zoe-state';
             routerLink="/"
             routerLinkActive="bg-surface-container text-primary font-semibold shadow-xs"
             [routerLinkActiveOptions]="{exact: true}"
-            class="px-5 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
+            class="px-4 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
           >
             Home
           </a>
           <a
             routerLink="/bikes"
             routerLinkActive="bg-surface-container text-primary font-semibold shadow-xs"
-            class="px-5 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
+            class="px-4 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
           >
             Bikes &amp; Customizer
           </a>
           <a
             routerLink="/tech"
             routerLinkActive="bg-surface-container text-primary font-semibold shadow-xs"
-            class="px-5 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
+            class="px-4 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
           >
             Tech &amp; Safety
           </a>
           <a
             routerLink="/club"
             routerLinkActive="bg-surface-container text-primary font-semibold shadow-xs"
-            class="px-5 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
+            class="px-4 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
           >
             Zoe Club &amp; Stories
+          </a>
+          <a
+            routerLink="/about"
+            routerLinkActive="bg-surface-container text-primary font-semibold shadow-xs"
+            class="px-4 py-2 rounded-full text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all whitespace-nowrap shrink-0"
+          >
+            About
           </a>
         </nav>
 
@@ -172,6 +179,14 @@ import {ZoeState} from '../services/zoe-state';
               class="px-4 py-3 rounded-2xl text-label-lg text-on-surface hover:bg-surface-container-low transition-colors"
             >
               Zoe Club &amp; Stories
+            </a>
+            <a
+              routerLink="/about"
+              routerLinkActive="bg-primary-fixed/40 text-primary font-semibold"
+              (click)="state.mobileMenuOpen.set(false)"
+              class="px-4 py-3 rounded-2xl text-label-lg text-on-surface hover:bg-surface-container-low transition-colors"
+            >
+              About
             </a>
           </nav>
 

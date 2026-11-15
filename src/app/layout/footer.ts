@@ -12,7 +12,7 @@ import {ZoeState} from '../services/zoe-state';
   template: `
     <footer class="w-full bg-surface-container-low mt-14">
       <div class="max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 pt-14 pb-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-14">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-10">
           <!-- Brand Info -->
           <div class="lg:col-span-4 space-y-5">
             <div class="flex items-center gap-3">
@@ -109,6 +109,11 @@ import {ZoeState} from '../services/zoe-state';
                   Care &amp; Maintenance
                 </a>
               </li>
+              <li>
+                <a routerLink="/about" class="hover:text-primary transition-colors">
+                  About ZoeBike AI
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -141,6 +146,24 @@ import {ZoeState} from '../services/zoe-state';
               <p class="text-label-sm text-error">Please enter a valid email address.</p>
             }
           </div>
+        </div>
+
+        <!-- Signature Graphics Banner -->
+        <div
+          class="mb-8 rounded-3xl bg-[#333333] overflow-hidden shadow-sm px-4 sm:px-8 py-4 sm:py-5"
+        >
+          <a
+            routerLink="/about"
+            aria-label="ZoeBike Electric Mobility — Explore About ZoeBike AI"
+            class="block group"
+          >
+            <img
+              [src]="images.footerBanner"
+              alt="ZoeBike stylized cyclist silhouette banner"
+              class="w-full h-20 sm:h-28 md:h-32 object-contain mx-auto transition-transform duration-500 group-hover:scale-[1.015]"
+              referrerpolicy="no-referrer"
+            />
+          </a>
         </div>
 
         <!-- Bottom Bar -->
