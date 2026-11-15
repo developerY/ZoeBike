@@ -1,0 +1,6 @@
+{
+  "name": "ZoeBike — Featherweight Electric Commuters",
+  "description": "Contemporary electric mobility sculpted for joy, elegance, and effortless urban living.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
