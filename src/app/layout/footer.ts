@@ -10,108 +10,104 @@ import {ZoeState} from '../services/zoe-state';
   selector: 'app-footer',
   imports: [RouterLink, ReactiveFormsModule, MatIconModule],
   template: `
-    <footer class="w-full bg-surface-container-low mt-14">
-      <div class="max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 pt-14 pb-8">
+    <footer class="w-full border-t border-slate-200 bg-slate-50 text-slate-600 mt-14">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-10">
           <!-- Brand Info -->
-          <div class="lg:col-span-4 space-y-5">
-            <div class="flex items-center gap-3">
+          <div class="lg:col-span-4 space-y-4">
+            <div class="flex items-center gap-2.5">
               <img
                 alt="ZoeBike Logo"
-                class="h-8 w-8 rounded-xl object-cover shadow-xs ring-1 ring-outline-variant/40"
+                class="h-7 w-7 rounded-lg object-cover border border-slate-200"
                 [src]="images.logo"
                 referrerpolicy="no-referrer"
               />
-              <span class="text-headline-sm text-on-surface font-semibold">ZoeBike</span>
+              <span class="font-display text-xl font-bold tracking-tight text-slate-900">
+                ZoeBike
+              </span>
             </div>
-            <p class="text-body-sm text-on-surface-variant max-w-sm">
-              Contemporary electric mobility sculpted for joy, elegance, and effortless urban
-              living. Designed sustainably with modern craft.
+            <p class="text-sm text-slate-600 leading-relaxed max-w-sm">
+              We hope to have the world fall in love with biking. Saving the Earth and strengthening
+              personal health one ride at a time.
             </p>
-            <div class="flex flex-wrap items-center gap-2 pt-1">
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/40 text-on-secondary-fixed-variant text-label-sm"
-              >
-                <mat-icon class="material-symbols-outlined text-[14px]">eco</mat-icon>
-                100% Carbon Neutral Transit
-              </span>
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-fixed/60 text-on-tertiary-fixed-variant text-label-sm"
-              >
-                <mat-icon class="material-symbols-outlined text-[14px]">verified</mat-icon>
-                CE &amp; UL Certified
-              </span>
-            </div>
+            <p class="text-xs font-medium text-slate-500">
+              <span class="text-seaglass">100% Carbon Neutral Transit</span>
+              <span class="mx-1.5 text-slate-300" aria-hidden="true">·</span>
+              <span class="text-ocean">CE &amp; UL Certified</span>
+            </p>
           </div>
 
-          <!-- Bikes & Gear -->
+          <!-- Sustainability & Cities -->
           <div class="lg:col-span-2 space-y-3">
-            <h3 class="text-label-lg text-on-surface uppercase tracking-wider">
-              Bikes &amp; Gear
-            </h3>
-            <ul class="space-y-2 text-body-sm text-on-surface-variant">
+            <h3 class="text-sm font-semibold text-slate-900">Sustainability</h3>
+            <ul class="space-y-2 text-sm text-slate-600">
               <li>
-                <a
-                  routerLink="/bikes"
-                  (click)="selectModel('air')"
-                  class="hover:text-primary transition-colors"
-                >
-                  Zoe Model 01 City
+                <a routerLink="/sustainability" class="hover:text-ocean transition-colors">
+                  Shared Bikes &amp; Health
                 </a>
               </li>
               <li>
                 <a
-                  routerLink="/bikes"
-                  (click)="selectModel('flow')"
-                  class="hover:text-primary transition-colors"
+                  routerLink="/sustainability/cities"
+                  class="hover:text-ocean transition-colors"
                 >
-                  Zoe Pure Step-Through
+                  Cities &amp; Local Commerce
                 </a>
               </li>
               <li>
-                <a routerLink="/bikes" class="hover:text-primary transition-colors">
-                  Custom Palette Studio
+                <a
+                  routerLink="/sustainability/cities/parking"
+                  class="hover:text-ocean transition-colors"
+                >
+                  PEZ Vertical Bike Towers
                 </a>
               </li>
               <li>
-                <a routerLink="/bikes" class="hover:text-primary transition-colors">
-                  Commuter Accessories
+                <a
+                  routerLink="/sustainability/micro-mobility"
+                  class="hover:text-ocean transition-colors"
+                >
+                  Micro Mobility &amp; Rickshaws
+                </a>
+              </li>
+              <li>
+                <a
+                  routerLink="/sustainability/cities/la"
+                  class="hover:text-ocean transition-colors"
+                >
+                  LA ’28 &amp; NY Corridors
                 </a>
               </li>
             </ul>
           </div>
 
-          <!-- Experience -->
+          <!-- Tech, Bikes & Store -->
           <div class="lg:col-span-2 space-y-3">
-            <h3 class="text-label-lg text-on-surface uppercase tracking-wider">Experience</h3>
-            <ul class="space-y-2 text-body-sm text-on-surface-variant">
+            <h3 class="text-sm font-semibold text-slate-900">Tech &amp; Store</h3>
+            <ul class="space-y-2 text-sm text-slate-600">
               <li>
-                <button
-                  type="button"
-                  (click)="state.openTestRideModal()"
-                  class="hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  Book Test Ride
-                </button>
-              </li>
-              <li>
-                <a routerLink="/tech" class="hover:text-primary transition-colors">
-                  Connected App Hub
+                <a routerLink="/tech" class="hover:text-ocean transition-colors">
+                  Why Bike &amp; Safety Tech
                 </a>
               </li>
               <li>
-                <a routerLink="/club" class="hover:text-primary transition-colors">
-                  Community Rides
+                <a routerLink="/tech/app" class="hover:text-ocean transition-colors">
+                  Apps, HUD &amp; AR/VR
                 </a>
               </li>
               <li>
-                <a routerLink="/tech" class="hover:text-primary transition-colors">
-                  Care &amp; Maintenance
+                <a routerLink="/tech/electric-brakes" class="hover:text-ocean transition-colors">
+                  Regenerative Brakes
                 </a>
               </li>
               <li>
-                <a routerLink="/about" class="hover:text-primary transition-colors">
-                  About ZoeBike AI
+                <a routerLink="/store" class="hover:text-ocean transition-colors">
+                  Store &amp; H₂E-Bike Concept
+                </a>
+              </li>
+              <li>
+                <a routerLink="/bikes" class="hover:text-ocean transition-colors">
+                  Bike Customizer Studio
                 </a>
               </li>
             </ul>
@@ -119,17 +115,15 @@ import {ZoeState} from '../services/zoe-state';
 
           <!-- Newsletter -->
           <div class="lg:col-span-4 space-y-3">
-            <h3 class="text-label-lg text-on-surface uppercase tracking-wider">
-              The Salon Dispatch
-            </h3>
-            <p class="text-body-sm text-on-surface-variant">
-              Receive notes on mindful commuting, product drops, and exclusive community retreats.
+            <h3 class="text-sm font-semibold text-slate-900">The Salon Dispatch</h3>
+            <p class="text-sm text-slate-600">
+              Receive notes on mindful commuting, sustainability blueprints, and app drops.
             </p>
             <form (ngSubmit)="submitDispatch()" class="flex items-center gap-2 pt-1">
               <div class="relative flex-1">
                 <input
                   [formControl]="emailControl"
-                  class="w-full px-5 py-3 rounded-full bg-surface-container text-on-surface placeholder:text-outline text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                   placeholder="Enter your email address"
                   type="email"
                   aria-label="Email address for Salon Dispatch"
@@ -137,20 +131,20 @@ import {ZoeState} from '../services/zoe-state';
               </div>
               <button
                 type="submit"
-                class="px-5 py-3 rounded-full bg-surface-container-highest text-on-surface text-label-md hover:bg-primary hover:text-on-primary transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
               >
                 {{ subscribed() ? 'Subscribed ✓' : 'Subscribe' }}
               </button>
             </form>
             @if (emailError()) {
-              <p class="text-label-sm text-error">Please enter a valid email address.</p>
+              <p class="text-xs text-rose-600 mt-1">Please enter a valid email address.</p>
             }
           </div>
         </div>
 
         <!-- Signature Graphics Banner -->
         <div
-          class="mb-8 rounded-3xl bg-[#333333] overflow-hidden shadow-sm px-4 sm:px-8 py-4 sm:py-5"
+          class="mb-8 rounded-2xl bg-[#333333] overflow-hidden border border-slate-200 px-4 sm:px-8 py-4 sm:py-5"
         >
           <a
             routerLink="/about"
@@ -168,33 +162,20 @@ import {ZoeState} from '../services/zoe-state';
 
         <!-- Bottom Bar -->
         <div
-          class="pt-5 border-t border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-3"
+          class="mt-10 pt-6 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500"
         >
-          <p class="text-label-sm text-on-surface-variant">
-            © 2025 ZoeBike Mobility Inc. All rights reserved. Crafted with gentle power.
-          </p>
-          <div class="flex items-center gap-5">
-            <button
-              type="button"
-              (click)="activeDoc.set('privacy')"
-              class="text-label-sm text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+          <p>© 2026 ZoeBike &amp; AshBike Mobility. Saving the Earth One Bike at a Time.</p>
+          <div class="flex flex-wrap items-center gap-5">
+            <a routerLink="/about" class="hover:text-ocean transition-colors">About AI</a>
+            <a routerLink="/info" class="hover:text-ocean transition-colors">BicycleBrain Info</a>
+            <a routerLink="/info/contact" class="hover:text-ocean transition-colors">Contact</a>
+            <a
+              routerLink="/info/contact/app-privacy-policy"
+              class="hover:text-ocean transition-colors"
             >
-              Privacy Policy
-            </button>
-            <button
-              type="button"
-              (click)="activeDoc.set('terms')"
-              class="text-label-sm text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
-            >
-              Terms of Service
-            </button>
-            <button
-              type="button"
-              (click)="activeDoc.set('sustainability')"
-              class="text-label-sm text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
-            >
-              Sustainability Manifesto
-            </button>
+              App Privacy Policy
+            </a>
+            <a routerLink="/info/contact/eula" class="hover:text-ocean transition-colors">EULA</a>
           </div>
         </div>
       </div>

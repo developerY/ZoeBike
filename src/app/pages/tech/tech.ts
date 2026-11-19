@@ -1,5 +1,8 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
+import {RouterLink} from '@angular/router';
+import {SectionSubnav} from '../../components/section-subnav';
+import {TECH_TABS} from '../../data/ashbike-data';
 import {ZOE_IMAGES} from '../../data/zoebike-data';
 import {ZoeState} from '../../services/zoe-state';
 
@@ -20,36 +23,23 @@ interface SafetyPillar {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-tech',
-  imports: [MatIconModule],
+  imports: [RouterLink, MatIconModule, SectionSubnav],
   template: `
     <div class="flex flex-col w-full">
+      <app-section-subnav [tabs]="techTabs" ariaLabel="Tech sub-navigation" />
       <!-- Hero Section -->
-      <section
-        class="relative w-full pt-12 pb-14 bg-gradient-to-b from-surface-container-low/60 to-surface overflow-hidden"
-      >
-        <div
-          class="absolute top-1/2 -right-24 w-[32rem] h-[32rem] rounded-full bg-secondary-fixed/35 blur-3xl pointer-events-none"
-        ></div>
-        <div
-          class="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-tertiary-fixed/30 blur-2xl pointer-events-none"
-        ></div>
-
-        <div class="max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 relative z-10">
+      <section class="w-full pt-10 pb-12 bg-surface border-b border-outline-variant/60">
+        <div class="max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16">
           <div
-            class="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-8 mb-14"
+            class="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-8 mb-10"
           >
             <div class="max-w-2xl space-y-3">
-              <div
-                class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md shadow-sm"
-              >
-                <span class="w-2 h-2 rounded-full bg-primary"></span>
-                <span class="text-label-sm text-on-surface uppercase tracking-wider">
-                  Architecture &amp; Intelligence
-                </span>
-              </div>
+              <p class="text-label-md text-primary font-semibold">
+                Architecture &amp; Intelligence
+              </p>
               <h1 class="text-headline-xl text-on-surface tracking-tight font-semibold">
                 High-Tech,<br class="hidden sm:inline" />
-                <span class="text-primary italic font-normal">Zero Intimidation.</span>
+                <span class="text-primary font-normal">Zero Intimidation.</span>
               </h1>
               <p class="text-body-lg text-on-surface-variant max-w-xl">
                 We stripped away cold gears, messy cables, and over-complicated telemetry. What
@@ -58,17 +48,17 @@ interface SafetyPillar {
               </p>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3 lg:pb-2">
+            <div class="flex flex-wrap items-center gap-3 lg:pb-1">
               <div
-                class="px-5 py-3 rounded-2xl bg-surface-container-lowest/90 shadow-sm flex items-center gap-3"
+                class="px-5 py-3.5 rounded-2xl border border-outline-variant bg-surface flex items-center gap-3"
               >
                 <div
-                  class="w-10 h-10 rounded-full bg-secondary-fixed/50 flex items-center justify-center text-secondary"
+                  class="w-10 h-10 rounded-xl border border-outline-variant bg-surface-container-low flex items-center justify-center text-secondary"
                 >
                   <mat-icon class="material-symbols-outlined text-[20px]">shield_lock</mat-icon>
                 </div>
                 <div>
-                  <p class="text-label-sm text-on-surface-variant">THEFT RATE</p>
+                  <p class="text-label-sm text-on-surface-variant">Theft Rate</p>
                   <p class="text-headline-sm font-semibold text-on-surface tabular-nums">
                     &lt; 0.2%
                   </p>
@@ -76,17 +66,17 @@ interface SafetyPillar {
               </div>
 
               <div
-                class="px-5 py-3 rounded-2xl bg-surface-container-lowest/90 shadow-sm flex items-center gap-3"
+                class="px-5 py-3.5 rounded-2xl border border-outline-variant bg-surface flex items-center gap-3"
               >
                 <div
-                  class="w-10 h-10 rounded-full bg-primary-fixed/60 flex items-center justify-center text-primary"
+                  class="w-10 h-10 rounded-xl border border-outline-variant bg-surface-container-low flex items-center justify-center text-primary"
                 >
                   <mat-icon class="material-symbols-outlined text-[20px]">
                     battery_charging_full
                   </mat-icon>
                 </div>
                 <div>
-                  <p class="text-label-sm text-on-surface-variant">FAST TOP-OFF</p>
+                  <p class="text-label-sm text-on-surface-variant">Fast Top-Off</p>
                   <p class="text-headline-sm font-semibold text-on-surface tabular-nums">
                     2.5 hrs
                   </p>
@@ -96,31 +86,47 @@ interface SafetyPillar {
           </div>
 
           <!-- Feature Spotlight Ribbon -->
-          <div
-            class="grid grid-cols-2 md:grid-cols-4 gap-4 p-2 rounded-3xl bg-surface-container/60 backdrop-blur-md"
-          >
-            <div class="flex items-center gap-3 p-4 rounded-2xl bg-surface-container-lowest/75">
-              <mat-icon class="material-symbols-outlined text-primary text-[24px]">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <a
+              routerLink="/tech/app"
+              class="flex items-center gap-3 p-4 rounded-2xl border border-outline-variant bg-surface hover:bg-surface-container-low transition-colors"
+            >
+              <mat-icon class="material-symbols-outlined text-primary text-[22px]">
                 phonelink_ring
               </mat-icon>
-              <span class="text-label-lg text-on-surface">Auto-Proximity Wake</span>
-            </div>
-            <div class="flex items-center gap-3 p-4 rounded-2xl bg-surface-container-lowest/75">
-              <mat-icon class="material-symbols-outlined text-secondary text-[24px]">
-                all_inclusive
+              <span class="text-label-md text-on-surface font-semibold">
+                Swift &amp; GoSwift Apps
+              </span>
+            </a>
+            <a
+              routerLink="/tech/electric-brakes"
+              class="flex items-center gap-3 p-4 rounded-2xl border border-outline-variant bg-surface hover:bg-surface-container-low transition-colors"
+            >
+              <mat-icon class="material-symbols-outlined text-secondary text-[22px]">
+                bolt
               </mat-icon>
-              <span class="text-label-lg text-on-surface">Grease-Free Belt</span>
-            </div>
-            <div class="flex items-center gap-3 p-4 rounded-2xl bg-surface-container-lowest/75">
-              <mat-icon class="material-symbols-outlined text-tertiary text-[24px]">
-                wb_twilight
+              <span class="text-label-md text-on-surface font-semibold">
+                Regen Anti-Lock Brakes
+              </span>
+            </a>
+            <a
+              routerLink="/tech/app/hud"
+              class="flex items-center gap-3 p-4 rounded-2xl border border-outline-variant bg-surface hover:bg-surface-container-low transition-colors"
+            >
+              <mat-icon class="material-symbols-outlined text-tertiary text-[22px]">
+                visibility
               </mat-icon>
-              <span class="text-label-lg text-on-surface">Ambient Starlight</span>
-            </div>
-            <div class="flex items-center gap-3 p-4 rounded-2xl bg-surface-container-lowest/75">
-              <mat-icon class="material-symbols-outlined text-primary text-[24px]">sos</mat-icon>
-              <span class="text-label-lg text-on-surface">Crash SOS Guardian</span>
-            </div>
+              <span class="text-label-md text-on-surface font-semibold">Smart Glass HUD</span>
+            </a>
+            <a
+              routerLink="/tech/features/functions"
+              class="flex items-center gap-3 p-4 rounded-2xl border border-outline-variant bg-surface hover:bg-surface-container-low transition-colors"
+            >
+              <mat-icon class="material-symbols-outlined text-primary text-[22px]">
+                psychology
+              </mat-icon>
+              <span class="text-label-md text-on-surface font-semibold">Smartphone Fusion</span>
+            </a>
           </div>
         </div>
       </section>
@@ -731,6 +737,7 @@ interface SafetyPillar {
 export class Tech {
   readonly state = inject(ZoeState);
   readonly images = ZOE_IMAGES;
+  readonly techTabs = TECH_TABS;
 
   readonly isBikeUnlocked = signal(true);
   readonly routeMode = signal<'flat' | 'direct'>('flat');

@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {RouterLink} from '@angular/router';
+import {SectionSubnav} from '../../components/section-subnav';
+import {BIKES_STORE_TABS} from '../../data/ashbike-data';
 import {
   ADDON_OPTIONS,
   BIKE_MODELS,
@@ -28,9 +30,10 @@ interface HotspotDetail {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-bikes',
-  imports: [RouterLink, MatIconModule],
+  imports: [RouterLink, MatIconModule, SectionSubnav],
   template: `
     <div class="flex flex-col w-full pb-14">
+      <app-section-subnav [tabs]="storeTabs" ariaLabel="Bikes and Store navigation" />
       <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 pt-8">
         <!-- Section 1: Model Selector Bar -->
         <div
@@ -77,7 +80,7 @@ interface HotspotDetail {
           <div class="lg:col-span-7 flex flex-col gap-5 lg:sticky lg:top-24">
             <!-- Visualizer Card Box -->
             <div
-              class="relative w-full rounded-[2.5rem] bg-surface-container-low overflow-hidden shadow-md flex flex-col aspect-[4/3] md:aspect-[16/11]"
+              class="relative w-full rounded-2xl border border-mineral-line bg-pearl overflow-hidden flex flex-col aspect-[4/3] md:aspect-[16/11]"
             >
               <!-- Dynamic Radial Gradient Backdrop -->
               <div
@@ -85,7 +88,7 @@ interface HotspotDetail {
                 [style.background]="
                   'radial-gradient(ellipse at center, ' +
                   selectedColor().gradientRgba +
-                  ', #f6f3f0 68%, #f0edea 100%)'
+                  ', #FAF9F6 68%, #EEF2F4 100%)'
                 "
               ></div>
 
@@ -1002,6 +1005,7 @@ export class Bikes {
     {label: 'Cockpit Detail', value: 90},
   ];
 
+  readonly storeTabs = BIKES_STORE_TABS;
   readonly hotspots: HotspotDetail[] = [
     {
       id: 'battery',

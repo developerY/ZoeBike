@@ -9,6 +9,8 @@ import {
 import {isPlatformBrowser} from '@angular/common';
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
+import {SectionSubnav} from '../../components/section-subnav';
+import {BIKES_STORE_TABS} from '../../data/ashbike-data';
 import {
   CLUB_EVENTS,
   GALLERY_POSTS,
@@ -23,9 +25,10 @@ import {ZoeState} from '../../services/zoe-state';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-club',
-  imports: [ReactiveFormsModule, MatIconModule],
+  imports: [ReactiveFormsModule, MatIconModule, SectionSubnav],
   template: `
     <div class="flex flex-col w-full">
+      <app-section-subnav [tabs]="storeTabs" ariaLabel="Bikes, Club and Store navigation" />
       <!-- Editorial Hero Section -->
       <section class="relative w-full overflow-hidden bg-surface-container-low">
         <div class="max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 py-14 lg:py-20">
@@ -695,6 +698,7 @@ export class Club {
   readonly state = inject(ZoeState);
   private readonly platformId = inject(PLATFORM_ID);
 
+  readonly storeTabs = BIKES_STORE_TABS;
   readonly images = ZOE_IMAGES;
   readonly stories = RIDER_STORIES;
   readonly events = CLUB_EVENTS;

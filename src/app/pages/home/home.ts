@@ -1,859 +1,1044 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {Router, RouterLink} from '@angular/router';
+import {ASHBIKE_APPS, PLANET_BENEFITS, RIDER_BENEFITS} from '../../data/ashbike-data';
 import {BIKE_MODELS, BikeModelKey, ZOE_IMAGES} from '../../data/zoebike-data';
 import {ZoeState} from '../../services/zoe-state';
+
+interface SoftwareSuiteItem {
+  id: string;
+  tabLabel: string;
+  kicker: string;
+  title: string;
+  tagline: string;
+  description: string;
+  ctaLabel: string;
+  ctaRoute: string;
+  architectureBadge: string;
+  highlights: string[];
+  icon: string;
+}
+
+const SOFTWARE_SUITE: SoftwareSuiteItem[] = [
+  {
+    id: 'ashbike',
+    tabLabel: 'AshBike Companion',
+    kicker: 'Android · Google Health Connect · Phase One Prototype',
+    title: 'AshBike Companion',
+    tagline: 'Your private, weather-aware cycling companion.',
+    description: ASHBIKE_APPS[0].summary,
+    ctaLabel: 'Open Full App Architecture',
+    ctaRoute: '/tech/app',
+    architectureBadge: '100% On-Device',
+    highlights: [
+      'Real-time wind, weather, speed, and elevation tracking',
+      'Custom route planning by surface quality and traffic density',
+      'Private on-device SQLite storage with zero external servers',
+      'Optional Google Health Connect read/write fitness sync',
+    ],
+    icon: 'smartphone',
+  },
+  {
+    id: 'swift',
+    tabLabel: 'Swift Bike Shift',
+    kicker: 'Android · San Francisco Transit · Early Alpha',
+    title: 'Swift Bike Shift',
+    tagline: 'Station-by-station urban bike discovery.',
+    description: ASHBIKE_APPS[1].summary,
+    ctaLabel: 'Explore Station Routing',
+    ctaRoute: '/tech/features',
+    architectureBadge: 'Live Dock Map',
+    highlights: [
+      'Downtown shared bike station lookup via map or next/previous pins',
+      'Discover neighborhood cafés and points of interest nearby',
+      'One-tap cycling turn-by-turn launch in Google Maps',
+      'Calendar trip reservation scheduling on roadmap',
+    ],
+    icon: 'map',
+  },
+  {
+    id: 'goswift',
+    tabLabel: 'GoSwift Fitness',
+    kicker: 'iOS · Apple Health & Calendar · Active Concept',
+    title: 'GoSwift Fitness',
+    tagline: 'Turn everyday trips into rewarding cardio.',
+    description: ASHBIKE_APPS[2].summary,
+    ctaLabel: 'See Sustainability Rewards',
+    ctaRoute: '/sustainability',
+    architectureBadge: 'Health + Rewards',
+    highlights: [
+      'Automatic Calendar-to-bike route matching for errands',
+      'Apple Health heart rate, cadence, and daily active step tracking',
+      'Eco-milestone collectibles redeemable for cycling gear',
+      'Designed around zero gym commute wasted time',
+    ],
+    icon: 'emoji_events',
+  },
+  {
+    id: 'wearos',
+    tabLabel: 'Go Swift WearOS',
+    kicker: 'WearOS Smartwatch · Glanceable Telemetry',
+    title: 'Go Swift WearOS',
+    tagline: 'Hands-on-bars smartwatch ride face.',
+    description: ASHBIKE_APPS[3].summary,
+    ctaLabel: 'Inspect Smart Glass & Watch',
+    ctaRoute: '/tech/app/hud',
+    architectureBadge: 'Wrist Display',
+    highlights: [
+      'Glanceable real-time cadence, speed, and trip duration',
+      'Remaining dock & PEZ tower stall timer at a glance',
+      'Phone stays pocketed for calmer city focus',
+      'Haptic navigation tap cues before street turns',
+    ],
+    icon: 'watch',
+  },
+  {
+    id: 'zoe-ai',
+    tabLabel: 'ZoeBike AI Neural',
+    kicker: 'On-Bike Edge Intelligence · 8 ms Torque Sensing',
+    title: 'ZoeBike AI Neural Torque',
+    tagline: 'Quiet assistance that anticipates hills and headwinds.',
+    description:
+      'On-bike edge intelligence reads incline gradient, headwind resistance, and your pedal cadence in under 8 milliseconds—delivering smooth electric power before fatigue begins.',
+    ctaLabel: 'Read About ZoeBike AI',
+    ctaRoute: '/about',
+    architectureBadge: '< 8 ms Edge Inference',
+    highlights: [
+      'Eco Glide, City Flow, and Hill Assist adaptive calibration',
+      'Regenerative front braking harvests downhill kinetic energy',
+      'Automatic crash SOS detection with local smartphone fusion',
+      'Sub-15 kg lightweight step-through aluminum-magnesium frame',
+    ],
+    icon: 'auto_awesome',
+  },
+];
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-home',
   imports: [RouterLink, ReactiveFormsModule, MatIconModule],
   template: `
-    <div class="flex flex-col w-full">
-      <!-- HERO SHOWCASE SECTION -->
-      <section
-        class="relative w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 py-6 lg:py-14 overflow-hidden"
-      >
-        <div
-          class="absolute -top-32 -right-20 w-96 h-96 rounded-full bg-primary-fixed-dim/30 blur-3xl pointer-events-none"
-        ></div>
-        <div
-          class="absolute top-1/2 -left-28 w-80 h-80 rounded-full bg-secondary-fixed/40 blur-3xl pointer-events-none"
-        ></div>
+    <div class="flex flex-col w-full bg-white">
+      <!-- HERO SECTION (bg-white, border-b border-slate-200) -->
+      <section class="w-full bg-white border-b border-slate-200 py-12 lg:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
+            <!-- Left Column -->
+            <div class="lg:col-span-6 flex flex-col justify-between space-y-8">
+              <div class="space-y-5">
+                <p class="text-sm font-medium text-emerald-700">
+                  ZoeBike <span class="text-slate-300 mx-1" aria-hidden="true">·</span> Sunlit
+                  Urban Mobility for Rider &amp; Planet
+                </p>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          <!-- Left Column: Editorial Manifesto & CTAs -->
-          <div class="lg:col-span-6 flex flex-col items-start z-10">
+                <h1
+                  class="font-display font-bold text-slate-900 tracking-tight leading-[1.06] text-4xl sm:text-5xl lg:text-[3.5rem]"
+                >
+                  Fall in love with biking, one ride at a time.
+                </h1>
+
+                <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+                  We are all athletes using our energy to save our planet and ourselves. ZoeBike
+                  fuses sub-15 kg electric frames, smartphone sensor fusion, regenerative brakes,
+                  and human-scale city infrastructure so everyday travel restores both health and
+                  clean air.
+                </p>
+
+                <div class="flex flex-wrap items-center gap-3 pt-1">
+                  <a
+                    routerLink="/sustainability"
+                    class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-colors whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                  >
+                    <mat-icon class="!text-[19px] !w-[19px] !h-[19px] leading-none">eco</mat-icon>
+                    <span>Explore Sustainability</span>
+                  </a>
+                  <a
+                    routerLink="/bikes"
+                    class="inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-slate-800 bg-slate-50 hover:bg-mineral border border-slate-200 rounded-xl transition-colors whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                  >
+                    <span>Browse Bikes &amp; Concepts</span>
+                    <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                      arrow_forward
+                    </mat-icon>
+                  </a>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-500">
+                Android · iOS · WearOS · Google Health Connect · Smart Glass HUD
+              </p>
+            </div>
+
+            <!-- Right Media Frame -->
             <div
-              class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-container/50 text-on-secondary-fixed-variant mb-5 shadow-sm"
+              class="lg:col-span-6 min-h-[300px] lg:min-h-[440px] bg-slate-100 rounded-2xl border border-slate-200 overflow-hidden flex items-center justify-center p-4 sm:p-6"
             >
-              <span class="w-2 h-2 rounded-full bg-secondary"></span>
-              <span class="text-label-sm uppercase tracking-wider">
-                Spring 2025 Edition · Featherweight E-Bikes
-              </span>
-            </div>
-
-            <h1 class="text-headline-xl text-on-surface tracking-tight mb-5">
-              Effortless Motion.<br />
-              <span class="text-primary italic font-normal">Tailored for You.</span>
-            </h1>
-
-            <p class="text-body-lg text-on-surface-variant max-w-lg mb-8">
-              Sculpted for poise, intuitive lightness, and joyful urban rhythm. An electric
-              companion designed from the frame up for women—carrying up metro stairs with a single
-              hand, gliding with whisper-quiet grace.
-            </p>
-
-            <!-- CTA Buttons -->
-            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto mb-8">
-              <a
-                routerLink="/bikes"
-                class="px-8 py-3.5 rounded-full bg-primary text-on-primary text-label-lg shadow-md hover:bg-primary-container transition-all active:scale-[0.98] inline-flex items-center gap-2 whitespace-nowrap"
-              >
-                <span>Explore Bikes</span>
-                <mat-icon class="material-symbols-outlined text-[18px]">arrow_forward</mat-icon>
-              </a>
-              <button
-                type="button"
-                (click)="state.openTestRideModal('flow')"
-                class="px-7 py-3.5 rounded-full bg-surface-container-high/80 backdrop-blur-md text-on-surface text-label-lg hover:bg-surface-container-highest transition-all active:scale-[0.98] inline-flex items-center gap-2 shadow-sm whitespace-nowrap cursor-pointer"
-              >
-                <mat-icon class="material-symbols-outlined text-[18px]">calendar_today</mat-icon>
-                <span>Book a Free Test Ride</span>
-              </button>
-            </div>
-
-            <!-- Metric Badges Row -->
-            <div class="grid grid-cols-3 gap-3 w-full max-w-md pt-1">
-              <div class="p-3.5 rounded-2xl bg-surface-container-low flex flex-col">
-                <span class="text-headline-sm font-semibold text-primary tabular-nums">
-                  14.2 kg
-                </span>
-                <span class="text-label-sm text-on-surface-variant mt-1">Featherweight</span>
-              </div>
-              <div class="p-3.5 rounded-2xl bg-surface-container-low flex flex-col">
-                <span class="text-headline-sm font-semibold text-secondary tabular-nums">
-                  75 km
-                </span>
-                <span class="text-label-sm text-on-surface-variant mt-1">Range per charge</span>
-              </div>
-              <div class="p-3.5 rounded-2xl bg-surface-container-low flex flex-col">
-                <span class="text-headline-sm font-semibold text-tertiary">GPS 4G</span>
-                <span class="text-label-sm text-on-surface-variant mt-1">Anti-Theft Radar</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Column: Hero Visual Studio Layout -->
-          <div class="lg:col-span-6 relative flex justify-center items-center">
-            <div
-              class="relative w-full aspect-[4/3] sm:aspect-[16/11] rounded-[2.5rem] bg-gradient-to-tr from-surface-container-high via-secondary-container/20 to-primary-fixed/30 p-5 sm:p-8 flex items-center justify-center shadow-xl"
-            >
-              <div
-                class="absolute w-72 h-72 rounded-full bg-surface-container-lowest/70 backdrop-blur-2xl shadow-inner"
-              ></div>
-
               <img
-                class="relative z-10 w-full h-full object-contain filter drop-shadow-[0_20px_25px_rgba(44,53,49,0.12)]"
-                alt="Minimalist luxury Zoe electric bicycle in soft terracotta and brushed aluminum finish"
+                class="w-full h-full object-contain transition-transform duration-500 ease-out hover:scale-[1.02]"
+                alt="Featherweight Zoe electric commuter bicycle in sunlit brushed finish"
                 [src]="images.heroBike"
                 referrerpolicy="no-referrer"
               />
+            </div>
+          </div>
 
-              <!-- Floating Spec 1 -->
-              <div
-                class="absolute top-6 left-6 z-20 flex items-center gap-2 px-3.5 py-2 rounded-full bg-surface-container-lowest/90 backdrop-blur-md shadow-md"
-              >
-                <mat-icon class="material-symbols-outlined text-secondary text-[18px]">scale</mat-icon>
-                <span class="text-label-md text-on-surface font-medium">
-                  14.2 kg · 1-Hand Carry
-                </span>
+          <!-- 4-Column Impact Strip anchored beneath Hero -->
+          <div
+            class="mt-12 pt-8 border-t border-slate-200 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
+          >
+            <div class="space-y-1">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-slate-900 tabular-nums">
+                0 g/km
+              </p>
+              <p class="text-sm font-semibold text-slate-800">Tailpipe Emissions</p>
+              <p class="text-xs text-slate-500">Clean air across daily commutes</p>
+            </div>
+
+            <div class="space-y-1">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-seaglass tabular-nums">
+                8x Less
+              </p>
+              <p class="text-sm font-semibold text-slate-800">Street Footprint</p>
+              <p class="text-xs text-slate-500">Quieter, calmer city corridors</p>
+            </div>
+
+            <div class="space-y-1">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-emerald-700 tabular-nums">
+                10 Bikes
+              </p>
+              <p class="text-sm font-semibold text-slate-800">Per Car Stall Footprint</p>
+              <p class="text-xs text-slate-500">Vertical PEZ-style Bike Towers</p>
+            </div>
+
+            <div class="space-y-1">
+              <p class="font-display text-2xl sm:text-3xl font-bold text-ocean tabular-nums">
+                +35 min
+              </p>
+              <p class="text-sm font-semibold text-slate-800">Daily Cardio Flow</p>
+              <p class="text-xs text-slate-500">Built-in health on every errand</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 01: CORE ARCHITECTURE (bg-slate-50, border-b border-slate-200) -->
+      <section class="w-full bg-slate-50 border-b border-slate-200 py-16 lg:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div class="max-w-2xl space-y-2">
+            <p class="text-sm font-medium text-emerald-700">01. Core Architecture</p>
+            <h2 class="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+              Saving the Earth one bike at a time.
+            </h2>
+            <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+              Four interconnected ideas—intelligent software, energy-recovering hardware, clean
+              propulsion concepts, and vertical urban space—built to make cycling irresistible.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Bento Wide Card 1 (bg-pearl) -->
+            <div
+              class="lg:col-span-2 bg-pearl rounded-2xl border border-mineral-line overflow-hidden grid grid-cols-1 md:grid-cols-12 items-stretch"
+            >
+              <div class="md:col-span-7 p-6 sm:p-8 flex flex-col justify-between gap-6">
+                <div class="space-y-2.5">
+                  <p class="text-xs font-medium text-emerald-700">
+                    Smartphone · Bicycle Brain Fusion · Android &amp; iOS
+                  </p>
+                  <h3 class="font-display text-2xl font-bold text-slate-900 tracking-tight">
+                    From Pocket to Pedal: Your Phone as Bicycle Brain
+                  </h3>
+                  <p class="text-sm text-slate-600 leading-relaxed">
+                    Leverage GPS, barometers, gyroscopes, and cameras already in your pocket for
+                    real-time wind forecasts, crash detection, terrain-aware routing, and Smart
+                    Glass HUD cues.
+                  </p>
+                </div>
+                <a
+                  routerLink="/tech/features/functions"
+                  class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition-colors"
+                >
+                  <span>Inspect Sensor Suite &amp; Apps</span>
+                  <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                    arrow_forward
+                  </mat-icon>
+                </a>
               </div>
-
-              <!-- Floating Spec 2 -->
               <div
-                class="absolute bottom-8 right-6 z-20 flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-surface-container-lowest/95 backdrop-blur-md shadow-lg"
+                class="md:col-span-5 min-h-[220px] bg-slate-100 border-t md:border-t-0 md:border-l border-mineral-line overflow-hidden"
               >
-                <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
-                <div class="flex flex-col">
-                  <span class="text-label-sm text-on-surface font-semibold">
-                    TorqueSense™ Assist
-                  </span>
-                  <span class="text-label-sm text-on-surface-variant text-[10px]">
-                    Zero jerk natural cadence
-                  </span>
+                <img
+                  [src]="images.techGps"
+                  alt="Smartphone mounted on bicycle handlebars showing navigation telemetry"
+                  class="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02]"
+                  referrerpolicy="no-referrer"
+                />
+              </div>
+            </div>
+
+            <!-- Bento Card 2 (bg-white, seaglass accent) -->
+            <div
+              class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 flex flex-col justify-between gap-6"
+            >
+              <div class="space-y-2.5">
+                <p class="text-xs font-medium text-seaglass">Urban Parking · Micro-Mobility</p>
+                <h3 class="font-display text-2xl font-bold text-slate-900 tracking-tight">
+                  Vertical Bike Tower
+                </h3>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                  Bike parking reimagined—just like a PEZ dispenser. An automated street-level
+                  elevator stacks bikes vertically, clearing sidewalks for cafés and pedestrians
+                  while shielding rides from theft and rain.
+                </p>
+              </div>
+              <a
+                routerLink="/sustainability/cities/parking"
+                class="inline-flex items-center gap-2 text-sm font-semibold text-seaglass hover:text-seaglass-deep transition-colors"
+              >
+                <span>Try Tower Simulator</span>
+                <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                  arrow_forward
+                </mat-icon>
+              </a>
+            </div>
+
+            <!-- Bento Card 3 (bg-white, emerald accent) -->
+            <div
+              class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 flex flex-col justify-between gap-6"
+            >
+              <div class="space-y-2.5">
+                <p class="text-xs font-medium text-emerald-700">
+                  Electric Brakes · Anti-Lock Safety
+                </p>
+                <h3 class="font-display text-2xl font-bold text-slate-900 tracking-tight">
+                  Regenerative Front Braking
+                </h3>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                  Replaces friction pads on the front wheel with electromagnetic generators. Harvests
+                  kinetic energy to charge phones and lights while preventing dangerous front-wheel
+                  lockups.
+                </p>
+              </div>
+              <a
+                routerLink="/tech/electric-brakes"
+                class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition-colors"
+              >
+                <span>Simulate Brake Harvest</span>
+                <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                  arrow_forward
+                </mat-icon>
+              </a>
+            </div>
+
+            <!-- Bento Wide Card 4 (bg-pearl, ocean accent) -->
+            <div
+              class="lg:col-span-2 bg-pearl rounded-2xl border border-mineral-line overflow-hidden grid grid-cols-1 md:grid-cols-12 items-stretch"
+            >
+              <div
+                class="md:col-span-5 min-h-[220px] bg-slate-100 border-b md:border-b-0 md:border-r border-mineral-line overflow-hidden"
+              >
+                <img
+                  [src]="images.lifestyleParis"
+                  alt="Rider cruising effortlessly along a sunlit boulevard on a lightweight Zoe electric bike"
+                  class="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02]"
+                  referrerpolicy="no-referrer"
+                />
+              </div>
+              <div class="md:col-span-7 p-6 sm:p-8 flex flex-col justify-between gap-6">
+                <div class="space-y-2.5">
+                  <p class="text-xs font-medium text-ocean">Store &amp; Concept Lab · H₂ Propulsion</p>
+                  <h3 class="font-display text-2xl font-bold text-slate-900 tracking-tight">
+                    The H₂ E-Bike Concept &amp; eMobility
+                  </h3>
+                  <p class="text-sm text-slate-600 leading-relaxed">
+                    Exploring hydrogen-assisted extended range alongside integrated electric
+                    rickshaws, eTruck logistics, and featherweight daily commuter frames built for
+                    real cities.
+                  </p>
+                </div>
+                <a
+                  routerLink="/store"
+                  class="inline-flex items-center gap-2 text-sm font-semibold text-ocean hover:text-ocean-deep transition-colors"
+                >
+                  <span>View H₂ Concept &amp; Store</span>
+                  <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                    arrow_forward
+                  </mat-icon>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 02: CONNECTED SOFTWARE & AI SUITE (bg-white, border-b border-slate-200) -->
+      <section class="w-full bg-white border-b border-slate-200 py-16 lg:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div class="max-w-xl space-y-2">
+              <p class="text-sm font-medium text-emerald-700">
+                02. Connected Software &amp; AI Suite
+              </p>
+              <h2 class="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+                Shared bike, fitness, and ZoeBike AI cockpit.
+              </h2>
+            </div>
+
+            <!-- AshBike Mineral Segmented Tab Switcher -->
+            <div
+              role="tablist"
+              aria-label="ZoeBike and AshBike software suite modules"
+              class="flex flex-wrap items-center gap-1.5 p-1.5 bg-mineral rounded-xl border border-mineral-line"
+            >
+              @for (app of softwareSuite; track app.id; let idx = $index) {
+                <button
+                  type="button"
+                  role="tab"
+                  [attr.aria-selected]="activeAppIndex() === idx"
+                  (click)="activeAppIndex.set(idx)"
+                  class="px-3.5 py-2 text-xs sm:text-sm rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                  [class]="
+                    activeAppIndex() === idx
+                      ? 'bg-white text-slate-900 font-semibold shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 font-medium'
+                  "
+                >
+                  {{ app.tabLabel }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Active App Detail Panel (bg-pearl) -->
+          <div
+            class="bg-pearl rounded-2xl border border-mineral-line p-7 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+          >
+            <div class="lg:col-span-6 space-y-5">
+              <p class="text-xs font-medium text-slate-500 font-mono">
+                {{ activeApp().kicker }}
+              </p>
+
+              <div class="flex items-center gap-3.5">
+                <div
+                  class="w-12 h-12 rounded-xl bg-seaglass-mist border border-seaglass-line text-seaglass flex items-center justify-center shrink-0"
+                >
+                  <mat-icon class="!text-[24px] !w-[24px] !h-[24px] leading-none">
+                    {{ activeApp().icon }}
+                  </mat-icon>
+                </div>
+                <div>
+                  <h3 class="font-display text-2xl font-bold text-slate-900 tracking-tight">
+                    {{ activeApp().title }}
+                  </h3>
+                  <p class="text-sm font-medium text-seaglass">{{ activeApp().tagline }}</p>
                 </div>
               </div>
 
-              <!-- Floating Spec 3 -->
-              <div
-                class="absolute -bottom-3 left-12 z-20 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-tertiary-fixed/90 text-on-tertiary-fixed text-label-sm shadow-md"
-              >
-                <mat-icon class="material-symbols-outlined text-[16px]">lock_reset</mat-icon>
-                <span>Always Connected GPS</span>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                {{ activeApp().description }}
+              </p>
+
+              <div>
+                <a
+                  [routerLink]="activeApp().ctaRoute"
+                  class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors whitespace-nowrap shrink-0"
+                >
+                  <span>{{ activeApp().ctaLabel }}</span>
+                  <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                    arrow_forward
+                  </mat-icon>
+                </a>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <!-- PRESS ACCREDITATION STRIP -->
-      <section class="w-full bg-surface-container-low/60 py-5">
-        <div
-          class="max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 flex flex-col md:flex-row items-center justify-between gap-5"
-        >
-          <span
-            class="text-label-sm text-on-surface-variant uppercase tracking-widest whitespace-nowrap"
-          >
-            Acclaimed by Modern Culture
-          </span>
-          <div class="grid grid-cols-3 gap-6 sm:gap-12 w-full md:w-auto items-center opacity-80">
-            <div class="flex items-center justify-center">
-              <span class="text-headline-sm font-bold tracking-tight text-on-surface">VOGUE</span>
-            </div>
-            <div class="flex items-center justify-center">
-              <span class="text-headline-sm font-semibold italic text-on-surface tracking-wider">
-                ELLE
-              </span>
-            </div>
-            <div class="flex items-center justify-center">
-              <span class="text-headline-sm font-black tracking-widest text-on-surface uppercase">
-                WIRED
-              </span>
-            </div>
-          </div>
-          <div class="hidden lg:block text-right">
-            <p class="text-label-sm text-outline italic">
-              “The most effortless luxury electric bicycle engineered for city rhythm.”
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ZOEBIKE AI MISSION BANNER -->
-      <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 pt-10">
-        <div
-          class="relative rounded-[2rem] overflow-hidden shadow-lg bg-inverse-surface grid grid-cols-1 lg:grid-cols-12 items-center"
-        >
-          <div class="lg:col-span-6 relative h-56 sm:h-64 lg:h-full min-h-[240px]">
-            <img
-              [src]="images.aboutBanner"
-              alt="ZoeBike cosmic cycling horizon banner"
-              class="w-full h-full object-cover object-center"
-              referrerpolicy="no-referrer"
-            />
-            <div
-              class="hidden lg:block absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-inverse-surface to-transparent"
-            ></div>
-            <div
-              class="lg:hidden absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-inverse-surface to-transparent"
-            ></div>
-          </div>
-
-          <div class="lg:col-span-6 p-6 sm:p-8 lg:p-10 flex flex-col items-start gap-3">
-            <span
-              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-on-primary text-label-sm uppercase tracking-wider"
-            >
-              <mat-icon class="material-symbols-outlined text-[14px]">auto_awesome</mat-icon>
-              <span>Intelligence in Motion</span>
-            </span>
-            <h2 class="text-headline-md text-inverse-on-surface tracking-tight">
-              Meet ZoeBike AI — Neural Torque &amp; Gentle Routing
-            </h2>
-            <p class="text-body-sm text-inverse-on-surface/80 max-w-xl">
-              Discover how our on-bike edge intelligence reads hills, wind, and traffic flow in
-              under 8 ms to turn every city ride into a calm daily sanctuary.
-            </p>
-            <div class="pt-1">
-              <a
-                routerLink="/about"
-                class="px-6 py-3 rounded-full bg-surface-container-lowest text-on-surface text-label-lg hover:bg-primary-fixed transition-all inline-flex items-center gap-2 whitespace-nowrap"
-              >
-                <span>Read Our AI Story</span>
-                <mat-icon class="material-symbols-outlined text-[18px]">arrow_forward</mat-icon>
-              </a>
+            <div class="lg:col-span-6 bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <span class="text-xs font-medium text-slate-500">Data Architecture</span>
+                <span class="font-mono text-xs font-semibold text-ocean tabular-nums">
+                  {{ activeApp().architectureBadge }}
+                </span>
+              </div>
+              <ul class="space-y-3">
+                @for (bullet of activeApp().highlights; track bullet) {
+                  <li class="flex items-start gap-2.5 text-sm text-slate-700">
+                    <mat-icon
+                      class="!text-[16px] !w-[16px] !h-[16px] leading-none text-emerald-600 mt-0.5 shrink-0"
+                    >
+                      check_circle_outline
+                    </mat-icon>
+                    <span>{{ bullet }}</span>
+                  </li>
+                }
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- FLAGSHIP MODELS SHOWCASE -->
-      <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 py-14">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-          <div class="max-w-xl">
-            <div
-              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed/40 text-on-primary-fixed-variant text-label-sm uppercase tracking-wider mb-2"
-            >
-              The Two Icons
+      <!-- SECTION 03: SIGNATURE HARDWARE (bg-slate-50, border-b border-slate-200) -->
+      <section class="w-full bg-slate-50 border-b border-slate-200 py-16 lg:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div class="max-w-xl space-y-2">
+              <p class="text-sm font-medium text-ocean">03. Signature Electric Hardware</p>
+              <h2 class="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+                Two featherweight electric silhouettes.
+              </h2>
+              <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                Sculpted from over 4,000 ergonomic rider body-scans with silent Gates Carbon belt
+                drives and balanced battery geometry.
+              </p>
             </div>
-            <h2 class="text-headline-lg text-on-surface tracking-tight">
-              Pure Expression. Two Distinct Spirits.
-            </h2>
-            <p class="text-body-md text-on-surface-variant mt-2">
-              Engineered around custom lightweight aluminum-magnesium frames with integrated battery
-              geometry and silent Gates Carbon belt drives.
-            </p>
-          </div>
-          <div class="flex items-center gap-2 shrink-0">
             <button
               type="button"
               (click)="showCompareModal.set(true)"
-              class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface text-label-md hover:bg-surface-container-highest transition-all whitespace-nowrap cursor-pointer"
+              class="inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-slate-800 bg-white hover:bg-mineral border border-slate-200 rounded-xl transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
             >
-              Compare Dimensions &amp; Spec
+              <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                compare_arrows
+              </mat-icon>
+              <span>Compare Dimensions &amp; Specs</span>
             </button>
           </div>
-        </div>
 
-        <!-- Models Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <!-- Card 1: Zoe Air 01 -->
-          <div
-            class="group rounded-[2rem] bg-surface-container-low p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-          >
-            <div>
-              <div class="flex items-start justify-between gap-4 mb-5">
-                <div>
-                  <span
-                    class="inline-block px-3 py-1 rounded-full bg-secondary-container/40 text-on-secondary-fixed-variant text-label-sm mb-2"
-                  >
-                    Ultra-Light Agility
-                  </span>
-                  <h3 class="text-headline-md text-on-surface">Zoe Air 01</h3>
-                  <p class="text-body-sm text-on-surface-variant mt-1">
-                    The city rocket. Precision diamond frame sculpted for nimble acceleration
-                    through rush-hour boulevards.
-                  </p>
-                </div>
-                <div class="text-right shrink-0">
-                  <span class="text-headline-sm font-semibold text-on-surface tabular-nums">
-                    $2,450
-                  </span>
-                  <span class="block text-label-sm text-outline tabular-nums">or $82/mo</span>
-                </div>
-              </div>
-
-              <!-- Color Swatch Selector -->
-              <div class="flex items-center gap-2.5 mb-5">
-                <span class="text-label-sm text-on-surface-variant mr-1">Palettes:</span>
-                @for (swatch of airSwatches; track swatch.name) {
-                  <button
-                    type="button"
-                    [title]="swatch.name"
-                    [attr.aria-label]="'Select ' + swatch.name + ' finish'"
-                    (click)="selectedAirSwatch.set(swatch.name)"
-                    class="w-6 h-6 rounded-full transition-transform cursor-pointer"
-                    [style.background-color]="swatch.hex"
-                    [class]="
-                      selectedAirSwatch() === swatch.name
-                        ? 'ring-2 ring-primary ring-offset-2 scale-110'
-                        : 'hover:scale-110'
-                    "
-                  ></button>
-                }
-                <span class="text-label-sm text-on-surface-variant ml-1">
-                  {{ selectedAirSwatch() }}
-                </span>
-              </div>
-
-              <!-- Image Container -->
-              <div
-                class="relative w-full h-64 sm:h-72 rounded-2xl bg-surface-container-lowest/80 overflow-hidden flex items-center justify-center p-4"
-              >
-                <img
-                  class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                  alt="Zoe Air 01 lightweight electric commuter bike"
-                  [src]="images.zoeAirHome"
-                  referrerpolicy="no-referrer"
-                />
-                <div class="absolute bottom-3 left-4 flex gap-2">
-                  <span
-                    class="px-2.5 py-1 rounded-full bg-surface/90 backdrop-blur-sm text-on-surface text-label-sm shadow-sm tabular-nums"
-                  >
-                    13.9 kg
-                  </span>
-                  <span
-                    class="px-2.5 py-1 rounded-full bg-surface/90 backdrop-blur-sm text-on-surface text-label-sm shadow-sm tabular-nums"
-                  >
-                    65 km
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="pt-5 flex items-center justify-between gap-3">
-              <button
-                type="button"
-                (click)="configureModel('air', 'Blush Terracotta')"
-                class="text-label-lg text-primary hover:text-primary-container inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <span>Configure Zoe Air</span>
-                <mat-icon class="material-symbols-outlined text-[16px]">chevron_right</mat-icon>
-              </button>
-              <button
-                type="button"
-                (click)="state.toggleFavorite('air')"
-                aria-label="Save Zoe Air 01 to favorites"
-                class="w-10 h-10 rounded-full flex items-center justify-center transition-colors cursor-pointer"
-                [class]="
-                  state.isFavorite('air')
-                    ? 'bg-primary text-on-primary'
-                    : 'bg-surface-container hover:bg-primary-fixed text-on-surface'
-                "
-              >
-                <mat-icon
-                  class="material-symbols-outlined text-[18px]"
-                  [class.icon-filled]="state.isFavorite('air')"
-                >
-                  favorite
-                </mat-icon>
-              </button>
-            </div>
-          </div>
-
-          <!-- Card 2: Zoe Flow Wave -->
-          <div
-            class="group rounded-[2rem] bg-surface-container-low p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-          >
-            <div>
-              <div class="flex items-start justify-between gap-4 mb-5">
-                <div>
-                  <span
-                    class="inline-block px-3 py-1 rounded-full bg-tertiary-fixed/60 text-on-tertiary-fixed-variant text-label-sm mb-2"
-                  >
-                    Effortless Low Step
-                  </span>
-                  <h3 class="text-headline-md text-on-surface">Zoe Flow Wave</h3>
-                  <p class="text-body-sm text-on-surface-variant mt-1">
-                    The graceful cruiser. Low-swoop frame accommodating long coats, skirts, and
-                    relaxed upright posture.
-                  </p>
-                </div>
-                <div class="text-right shrink-0">
-                  <span class="text-headline-sm font-semibold text-on-surface tabular-nums">
-                    $2,680
-                  </span>
-                  <span class="block text-label-sm text-outline tabular-nums">or $89/mo</span>
-                </div>
-              </div>
-
-              <!-- Color Swatch Selector -->
-              <div class="flex items-center gap-2.5 mb-5">
-                <span class="text-label-sm text-on-surface-variant mr-1">Palettes:</span>
-                @for (swatch of flowSwatches; track swatch.name) {
-                  <button
-                    type="button"
-                    [title]="swatch.name"
-                    [attr.aria-label]="'Select ' + swatch.name + ' finish'"
-                    (click)="selectedFlowSwatch.set(swatch.name)"
-                    class="w-6 h-6 rounded-full transition-transform cursor-pointer"
-                    [style.background-color]="swatch.hex"
-                    [class]="
-                      selectedFlowSwatch() === swatch.name
-                        ? 'ring-2 ring-primary ring-offset-2 scale-110'
-                        : 'hover:scale-110'
-                    "
-                  ></button>
-                }
-                <span class="text-label-sm text-on-surface-variant ml-1">
-                  {{ selectedFlowSwatch() }}
-                </span>
-              </div>
-
-              <!-- Image Container -->
-              <div
-                class="relative w-full h-64 sm:h-72 rounded-2xl bg-surface-container-lowest/80 overflow-hidden flex items-center justify-center p-4"
-              >
-                <img
-                  class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                  alt="Zoe Flow Wave low step-through electric commuter bike"
-                  [src]="images.zoeFlowHome"
-                  referrerpolicy="no-referrer"
-                />
-                <div class="absolute bottom-3 left-4 flex gap-2">
-                  <span
-                    class="px-2.5 py-1 rounded-full bg-surface/90 backdrop-blur-sm text-on-surface text-label-sm shadow-sm tabular-nums"
-                  >
-                    14.6 kg
-                  </span>
-                  <span
-                    class="px-2.5 py-1 rounded-full bg-surface/90 backdrop-blur-sm text-on-surface text-label-sm shadow-sm tabular-nums"
-                  >
-                    80 km
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="pt-5 flex items-center justify-between gap-3">
-              <button
-                type="button"
-                (click)="configureModel('flow', 'Lilac Haze')"
-                class="text-label-lg text-primary hover:text-primary-container inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <span>Configure Zoe Flow</span>
-                <mat-icon class="material-symbols-outlined text-[16px]">chevron_right</mat-icon>
-              </button>
-              <button
-                type="button"
-                (click)="state.toggleFavorite('flow')"
-                aria-label="Save Zoe Flow Wave to favorites"
-                class="w-10 h-10 rounded-full flex items-center justify-center transition-colors cursor-pointer"
-                [class]="
-                  state.isFavorite('flow')
-                    ? 'bg-primary text-on-primary'
-                    : 'bg-surface-container hover:bg-primary-fixed text-on-surface'
-                "
-              >
-                <mat-icon
-                  class="material-symbols-outlined text-[18px]"
-                  [class.icon-filled]="state.isFavorite('flow')"
-                >
-                  favorite
-                </mat-icon>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ERGONOMICS SECTION -->
-      <section class="w-full bg-surface-container-low/40 py-14">
-        <div class="max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16">
-          <div class="text-center max-w-2xl mx-auto mb-12">
-            <span
-              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-tertiary-fixed/50 text-on-tertiary-fixed-variant text-label-sm uppercase tracking-wider mb-2"
-            >
-              Anatomical Craft
-            </span>
-            <h2 class="text-headline-lg text-on-surface tracking-tight">
-              Form Follows Her Movement
-            </h2>
-            <p class="text-body-md text-on-surface-variant mt-2">
-              Most electric bikes are heavy, modified men’s downhill platforms. Zoe was born from
-              over 4,000 ergonomic body-scans of female riders to engineer true comfort without
-              compromise.
-            </p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Zoe Air 01 -->
             <div
-              class="p-8 rounded-[2rem] bg-surface-container-lowest shadow-md flex flex-col justify-between"
+              class="bg-white rounded-2xl border border-slate-200 p-7 flex flex-col justify-between gap-6"
             >
-              <div>
-                <div
-                  class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-5"
-                >
-                  <mat-icon class="material-symbols-outlined text-[24px]">height</mat-icon>
+              <div class="space-y-5">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="space-y-1">
+                    <p class="text-xs font-medium text-seaglass">
+                      Ultra-Light Diamond · 13.9 kg · 65 km
+                    </p>
+                    <h3 class="font-display text-2xl font-bold text-slate-900 tracking-tight">
+                      Zoe Air 01
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                      Nimble city agility sculpted for effortless stair climbs and fast commuting.
+                    </p>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="font-display text-2xl font-bold text-slate-900 tabular-nums">
+                      $2,450
+                    </span>
+                    <span class="block text-xs text-slate-500 tabular-nums">or $82/mo</span>
+                  </div>
                 </div>
-                <h3 class="text-headline-sm text-on-surface mb-2">
-                  Ultra-Low Standover Clearance
-                </h3>
-                <p class="text-body-sm text-on-surface-variant mb-5">
-                  Step on and off in any outfit—trench coats, pencil skirts, or dresses. The bottom
-                  bracket clearance sits 18% lower than standard unisex commuters.
-                </p>
-              </div>
-              <div class="pt-3 flex items-center justify-between text-label-sm text-secondary">
-                <span>Standover: 39 cm</span>
-                <mat-icon class="material-symbols-outlined text-[18px]">check_circle</mat-icon>
-              </div>
-            </div>
 
-            <div
-              class="p-8 rounded-[2rem] bg-surface-container-lowest shadow-md flex flex-col justify-between"
-            >
-              <div>
-                <div
-                  class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-secondary mb-5"
-                >
-                  <mat-icon class="material-symbols-outlined text-[24px]">pan_tool</mat-icon>
-                </div>
-                <h3 class="text-headline-sm text-on-surface mb-2">Custom Grip &amp; Narrow Reach</h3>
-                <p class="text-body-sm text-on-surface-variant mb-5">
-                  Tapered brake levers adjusted for smaller hand spans. Handlebars are 40mm narrower
-                  to eliminate shoulder pinch during extended city navigation.
-                </p>
-              </div>
-              <div class="pt-3 flex items-center justify-between text-label-sm text-secondary">
-                <span>Reach Span: 68 mm reach</span>
-                <mat-icon class="material-symbols-outlined text-[18px]">check_circle</mat-icon>
-              </div>
-            </div>
-
-            <div
-              class="p-8 rounded-[2rem] bg-surface-container-lowest shadow-md flex flex-col justify-between"
-            >
-              <div>
-                <div
-                  class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary mb-5"
-                >
-                  <mat-icon class="material-symbols-outlined text-[24px]">flight_takeoff</mat-icon>
-                </div>
-                <h3 class="text-headline-sm text-on-surface mb-2">
-                  Balanced 50/50 Portage Weight
-                </h3>
-                <p class="text-body-sm text-on-surface-variant mb-5">
-                  Sub-15kg total weight with battery centered directly over the bottom axle. Pick up
-                  the bike by the top tube with a single arm to effortlessly glide up subway steps.
-                </p>
-              </div>
-              <div class="pt-3 flex items-center justify-between text-label-sm text-secondary">
-                <span>Weight: 14.2 kg complete</span>
-                <mat-icon class="material-symbols-outlined text-[18px]">check_circle</mat-icon>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- LIFESTYLE & MOSAIC FREEDOM SECTION -->
-      <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 py-14">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          <!-- Left Photo Mosaic -->
-          <div class="lg:col-span-7 grid grid-cols-2 gap-4 sm:gap-5">
-            <div class="space-y-4 sm:space-y-5">
-              <div class="rounded-[2rem] overflow-hidden shadow-lg h-64 sm:h-80 relative group">
-                <img
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  alt="Woman riding soft sage green Zoe e-bike past a Parisian stone cafe facade"
-                  [src]="images.lifestyleParis"
-                  referrerpolicy="no-referrer"
-                />
-                <div
-                  class="absolute bottom-3 left-3 bg-surface/90 backdrop-blur-md px-3 py-1 rounded-full text-label-sm text-on-surface"
-                >
-                  Rue de Bretagne, Paris
-                </div>
-              </div>
-              <div class="rounded-[2rem] bg-surface-container p-5 flex flex-col justify-center">
-                <span class="text-headline-sm font-semibold text-primary mb-1">2.5 Hours</span>
-                <span class="text-body-sm text-on-surface-variant">
-                  Full rapid charge using compact lipstick-sized brick adapter.
-                </span>
-              </div>
-            </div>
-
-            <div class="space-y-4 sm:space-y-5 sm:-mt-10">
-              <div class="rounded-[2rem] bg-primary-fixed/40 p-5 flex flex-col justify-center">
-                <div class="flex items-center gap-1 text-primary mb-2">
-                  @for (star of [1, 2, 3, 4, 5]; track star) {
-                    <mat-icon class="material-symbols-outlined icon-filled text-[20px]">
-                      star
-                    </mat-icon>
+                <div class="flex items-center gap-2.5">
+                  <span class="text-xs font-medium text-slate-500 mr-1">Finish:</span>
+                  @for (swatch of airSwatches; track swatch.name) {
+                    <button
+                      type="button"
+                      [title]="swatch.name"
+                      [attr.aria-label]="'Select ' + swatch.name + ' finish'"
+                      (click)="selectedAirSwatch.set(swatch.name)"
+                      class="w-6 h-6 rounded-full border border-slate-300 transition-transform cursor-pointer"
+                      [style.background-color]="swatch.hex"
+                      [class]="
+                        selectedAirSwatch() === swatch.name
+                          ? 'ring-2 ring-emerald-600 ring-offset-2 scale-110'
+                          : 'hover:scale-110'
+                      "
+                    ></button>
                   }
+                  <span class="font-mono text-xs text-slate-600 ml-1">
+                    {{ selectedAirSwatch() }}
+                  </span>
                 </div>
-                <p class="text-body-sm text-on-surface italic">
-                  "I finally stopped taking cabs to meetings. It feels like wearing sneakers that
-                  fly."
-                </p>
-                <span class="text-label-sm text-on-surface-variant mt-2 font-medium">
-                  — Camille L., Architect
-                </span>
-              </div>
-              <div class="rounded-[2rem] overflow-hidden shadow-lg h-72 sm:h-96 relative group">
-                <img
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  alt="Close up of hands holding polished Zoe commuter handlebars near flower market"
-                  [src]="images.lifestyleHandlebars"
-                  referrerpolicy="no-referrer"
-                />
+
                 <div
-                  class="absolute top-3 right-3 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-full text-label-sm text-secondary font-medium"
+                  class="w-full h-64 rounded-xl bg-pearl border border-mineral-line overflow-hidden flex items-center justify-center p-4"
                 >
-                  Zero Maintenance Belt
+                  <img
+                    class="w-full h-full object-contain transition-transform duration-500 ease-out hover:scale-[1.03]"
+                    alt="Zoe Air 01 lightweight electric commuter bike"
+                    [src]="images.zoeAirHome"
+                    referrerpolicy="no-referrer"
+                  />
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Right Narrative & Live Battery Widget -->
-          <div class="lg:col-span-5 flex flex-col items-start lg:pl-5">
-            <span
-              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/50 text-on-secondary-fixed-variant text-label-sm uppercase tracking-wider mb-2"
-            >
-              Daily Liberation
-            </span>
-            <h2 class="text-headline-lg text-on-surface tracking-tight mb-3">
-              Reclaim Your Morning Sanctuary
-            </h2>
-            <p class="text-body-md text-on-surface-variant mb-5">
-              Say goodbye to delayed metro trains and sweaty hill climbs. Zoe’s silent hub engine
-              produces a natural rush of confidence—accelerating smoothly the instant your foot
-              touches the pedal.
-            </p>
-
-            <!-- Battery Widget Card -->
-            <div
-              class="w-full p-5 rounded-[2rem] bg-surface-container-low shadow-sm flex flex-col gap-3 mb-6"
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <mat-icon class="material-symbols-outlined text-secondary text-[22px]">
-                    battery_charging_full
+              <div class="pt-4 border-t border-slate-200 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  (click)="configureModel('air', selectedAirSwatch())"
+                  class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer"
+                >
+                  <span>Configure Zoe Air 01</span>
+                  <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                    arrow_forward
                   </mat-icon>
-                  <span class="text-label-lg text-on-surface">Integrated Smart Cell</span>
-                </div>
-                <span class="text-label-md text-secondary font-bold tabular-nums">
-                  100% (78 km est.)
-                </span>
-              </div>
-              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
-                <div class="bg-secondary h-full rounded-full w-[85%]"></div>
-              </div>
-              <div class="flex items-center justify-between text-label-sm text-on-surface-variant">
-                <span>Removable with magnetic key</span>
-                <span>2.8 kg lightweight cell</span>
+                </button>
+                <button
+                  type="button"
+                  (click)="state.toggleFavorite('air')"
+                  aria-label="Save Zoe Air 01 to favorites"
+                  class="w-10 h-10 rounded-xl border flex items-center justify-center transition-colors cursor-pointer"
+                  [class]="
+                    state.isFavorite('air')
+                      ? 'bg-emerald-600 border-emerald-600 text-white'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-mineral'
+                  "
+                >
+                  <mat-icon
+                    class="!text-[18px] !w-[18px] !h-[18px] leading-none"
+                    [class.icon-filled]="state.isFavorite('air')"
+                  >
+                    favorite
+                  </mat-icon>
+                </button>
               </div>
             </div>
 
-            <a
-              routerLink="/club"
-              class="px-6 py-3 rounded-full bg-surface-container-high text-on-surface text-label-lg hover:bg-surface-container-highest transition-colors inline-flex items-center gap-2"
+            <!-- Zoe Flow Wave -->
+            <div
+              class="bg-white rounded-2xl border border-slate-200 p-7 flex flex-col justify-between gap-6"
             >
-              <span>Read Rider Stories</span>
-              <mat-icon class="material-symbols-outlined text-[16px]">menu_book</mat-icon>
-            </a>
+              <div class="space-y-5">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="space-y-1">
+                    <p class="text-xs font-medium text-ocean">
+                      Low Step-Through · 14.6 kg · 80 km
+                    </p>
+                    <h3 class="font-display text-2xl font-bold text-slate-900 tracking-tight">
+                      Zoe Flow Wave
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                      39 cm step-through frame engineered for upright comfort in everyday clothing.
+                    </p>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="font-display text-2xl font-bold text-slate-900 tabular-nums">
+                      $2,680
+                    </span>
+                    <span class="block text-xs text-slate-500 tabular-nums">or $89/mo</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2.5">
+                  <span class="text-xs font-medium text-slate-500 mr-1">Finish:</span>
+                  @for (swatch of flowSwatches; track swatch.name) {
+                    <button
+                      type="button"
+                      [title]="swatch.name"
+                      [attr.aria-label]="'Select ' + swatch.name + ' finish'"
+                      (click)="selectedFlowSwatch.set(swatch.name)"
+                      class="w-6 h-6 rounded-full border border-slate-300 transition-transform cursor-pointer"
+                      [style.background-color]="swatch.hex"
+                      [class]="
+                        selectedFlowSwatch() === swatch.name
+                          ? 'ring-2 ring-emerald-600 ring-offset-2 scale-110'
+                          : 'hover:scale-110'
+                      "
+                    ></button>
+                  }
+                  <span class="font-mono text-xs text-slate-600 ml-1">
+                    {{ selectedFlowSwatch() }}
+                  </span>
+                </div>
+
+                <div
+                  class="w-full h-64 rounded-xl bg-pearl border border-mineral-line overflow-hidden flex items-center justify-center p-4"
+                >
+                  <img
+                    class="w-full h-full object-contain transition-transform duration-500 ease-out hover:scale-[1.03]"
+                    alt="Zoe Flow Wave low step-through electric commuter bike"
+                    [src]="images.zoeFlowHome"
+                    referrerpolicy="no-referrer"
+                  />
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-slate-200 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  (click)="configureModel('flow', selectedFlowSwatch())"
+                  class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer"
+                >
+                  <span>Configure Zoe Flow Wave</span>
+                  <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                    arrow_forward
+                  </mat-icon>
+                </button>
+                <button
+                  type="button"
+                  (click)="state.toggleFavorite('flow')"
+                  aria-label="Save Zoe Flow Wave to favorites"
+                  class="w-10 h-10 rounded-xl border flex items-center justify-center transition-colors cursor-pointer"
+                  [class]="
+                    state.isFavorite('flow')
+                      ? 'bg-emerald-600 border-emerald-600 text-white'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-mineral'
+                  "
+                >
+                  <mat-icon
+                    class="!text-[18px] !w-[18px] !h-[18px] leading-none"
+                    [class.icon-filled]="state.isFavorite('flow')"
+                  >
+                    favorite
+                  </mat-icon>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- INTERACTIVE TEST RIDE BOOKING BANNER -->
-      <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 py-14">
+      <!-- SECTION 04: WHY BIKE · QUANTIFIED IMPACT (bg-white, border-b border-slate-200) -->
+      <section class="w-full bg-white border-b border-slate-200 py-16 lg:py-24">
         <div
-          class="relative rounded-[2.5rem] bg-gradient-to-br from-surface-container-high via-surface-container to-primary-fixed/20 p-6 sm:p-12 overflow-hidden shadow-lg"
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start"
         >
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            <!-- Content -->
-            <div class="lg:col-span-7">
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest text-primary text-label-sm uppercase tracking-wider mb-3 shadow-sm"
-              >
-                Experience the Magic
-              </span>
-              <h2 class="text-headline-lg text-on-surface tracking-tight mb-3">
-                Feel the Weightlessness in Person.
+          <!-- Left Column: Interactive Impact Slider & Multi-Accent Filter -->
+          <div class="lg:col-span-5 space-y-6">
+            <div class="space-y-2.5">
+              <p class="text-sm font-medium text-emerald-700">04. Why Bike · Quantified Impact</p>
+              <h2 class="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+                See what replacing car miles does in one year.
               </h2>
-              <p class="text-body-md text-on-surface-variant max-w-lg mb-6">
-                Schedule a complimentary 45-minute private test ride at our boutique salons or
-                request a concierge doorstep delivery in select metropolitan areas.
+              <p class="text-sm text-slate-600 leading-relaxed">
+                Slide your daily round-trip ride distance to estimate annual carbon kept out of the
+                sky, household fuel savings redirected locally, and weekly aerobic fitness gained.
               </p>
+            </div>
 
-              <!-- City Salons Chips -->
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="text-label-sm text-on-surface-variant mr-2">Salons:</span>
-                @for (city of salonCities; track city) {
-                  <button
-                    type="button"
-                    (click)="selectedSalonCity.set(city)"
-                    class="px-3.5 py-1.5 rounded-full text-label-sm shadow-sm transition-all cursor-pointer"
-                    [class]="
-                      selectedSalonCity() === city
-                        ? 'bg-primary text-on-primary'
-                        : 'bg-surface-container-lowest text-on-surface hover:bg-primary hover:text-on-primary'
-                    "
-                  >
-                    {{ city }}
-                  </button>
-                }
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
+              <div class="flex items-center justify-between gap-2">
+                <label for="daily-km-slider" class="text-sm font-semibold text-slate-700">
+                  Daily Commute Distance
+                </label>
+                <span class="font-mono text-xl sm:text-2xl font-bold text-emerald-700 tabular-nums">
+                  {{ dailyKm() }} km / day
+                </span>
+              </div>
+
+              <div class="space-y-2">
+                <input
+                  id="daily-km-slider"
+                  type="range"
+                  min="2"
+                  max="40"
+                  step="1"
+                  [value]="dailyKm()"
+                  (input)="onSliderChange($event)"
+                  class="w-full accent-emerald-600 cursor-pointer"
+                />
+                <div class="flex justify-between font-mono text-xs text-slate-500">
+                  <span>2 km</span>
+                  <span>20 km</span>
+                  <span>40 km</span>
+                </div>
+              </div>
+
+              <!-- 2x2 Tinted Coastal Readout Cards (§6.3) -->
+              <div class="grid grid-cols-2 gap-3 tabular-nums">
+                <div class="p-4 rounded-xl bg-ocean-mist border border-ocean-line">
+                  <span class="text-xs font-medium text-slate-600 block">CO₂ Avoided / Yr</span>
+                  <span class="font-display text-xl font-bold text-ocean mt-1 block">
+                    {{ co2SavedKgYear() }} kg
+                  </span>
+                </div>
+                <div class="p-4 rounded-xl bg-seaglass-mist border border-seaglass-line">
+                  <span class="text-xs font-medium text-slate-600 block">Fuel &amp; Parking Saved</span>
+                  <span class="font-display text-xl font-bold text-seaglass mt-1 block">
+                    \${{ moneySavedYear().toLocaleString() }}
+                  </span>
+                </div>
+                <div class="p-4 rounded-xl bg-mineral border border-mineral-line">
+                  <span class="text-xs font-medium text-slate-600 block">Active Energy / Wk</span>
+                  <span class="font-display text-xl font-bold text-slate-900 mt-1 block">
+                    {{ caloriesPerWeek().toLocaleString() }} kcal
+                  </span>
+                </div>
+                <div class="p-4 rounded-xl bg-pearl border border-mineral-line">
+                  <span class="text-xs font-medium text-slate-600 block">Active Cardio / Wk</span>
+                  <span class="font-display text-xl font-bold text-emerald-700 mt-1 block">
+                    {{ activeMinsWeek() }} min
+                  </span>
+                </div>
               </div>
             </div>
 
-            <!-- Booking Widget Form Card -->
+            <!-- Semantic Filter Chips (§6.4) -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                (click)="benefitFilter.set('all')"
+                class="px-4 py-2 text-xs rounded-xl transition-colors cursor-pointer whitespace-nowrap"
+                [class]="
+                  benefitFilter() === 'all'
+                    ? 'bg-slate-900 text-white font-semibold'
+                    : 'bg-mineral text-slate-700 hover:bg-slate-200 font-medium'
+                "
+              >
+                All Benefits (8)
+              </button>
+              <button
+                type="button"
+                (click)="benefitFilter.set('rider')"
+                class="px-4 py-2 text-xs rounded-xl transition-colors cursor-pointer whitespace-nowrap"
+                [class]="
+                  benefitFilter() === 'rider'
+                    ? 'bg-emerald-600 text-white font-semibold'
+                    : 'bg-mineral text-slate-700 hover:bg-slate-200 font-medium'
+                "
+              >
+                For the Rider
+              </button>
+              <button
+                type="button"
+                (click)="benefitFilter.set('planet')"
+                class="px-4 py-2 text-xs rounded-xl transition-colors cursor-pointer whitespace-nowrap"
+                [class]="
+                  benefitFilter() === 'planet'
+                    ? 'bg-ocean text-white font-semibold'
+                    : 'bg-mineral text-slate-700 hover:bg-slate-200 font-medium'
+                "
+              >
+                For the Planet
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Clean 2-Column Benefits Grid -->
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
+            @for (benefit of filteredBenefits(); track benefit.title) {
+              <div
+                class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between gap-4"
+              >
+                <div class="flex items-center justify-between gap-2">
+                  <div
+                    class="w-10 h-10 rounded-xl border flex items-center justify-center shrink-0"
+                    [class]="
+                      benefit.audience === 'rider'
+                        ? 'bg-seaglass-mist border-seaglass-line text-seaglass'
+                        : 'bg-ocean-mist border-ocean-line text-ocean'
+                    "
+                  >
+                    <mat-icon class="!text-[20px] !w-[20px] !h-[20px] leading-none">
+                      {{ benefit.icon }}
+                    </mat-icon>
+                  </div>
+                  <span class="font-mono text-xs text-slate-500 tabular-nums">
+                    {{ benefit.metric }}
+                  </span>
+                </div>
+                <div class="space-y-1.5">
+                  <h3 class="font-display text-lg font-semibold text-slate-900">
+                    {{ benefit.title }}
+                  </h3>
+                  <p class="text-sm text-slate-600 leading-relaxed">
+                    {{ benefit.detail }}
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 05: ZOEBIKE AI & CONCIERGE TEST RIDE (bg-white) -->
+      <section class="w-full bg-white py-16 lg:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div
+            class="bg-pearl rounded-2xl border border-mineral-line overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch"
+          >
+            <!-- Left: ZoeBike AI Horizon Banner & Salon Selector -->
+            <div
+              class="lg:col-span-7 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-mineral-line"
+            >
+              <div class="h-48 sm:h-56 bg-slate-100 border-b border-mineral-line overflow-hidden">
+                <img
+                  [src]="images.aboutBanner"
+                  alt="ZoeBike cosmic cycling horizon banner"
+                  class="w-full h-full object-cover object-center"
+                  referrerpolicy="no-referrer"
+                />
+              </div>
+              <div class="p-7 sm:p-8 space-y-5 flex-1 flex flex-col justify-between">
+                <div class="space-y-2.5">
+                  <p class="text-sm font-medium text-emerald-700">
+                    05. ZoeBike AI &amp; Regional Salons
+                  </p>
+                  <h2
+                    class="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight"
+                  >
+                    Feel Neural Torque in Person.
+                  </h2>
+                  <p class="text-sm text-slate-600 leading-relaxed max-w-xl">
+                    Edge inference reads road incline and headwinds in under 8 ms so every climb
+                    feels effortless. Reserve a complimentary 45-minute test ride or read our story
+                    on the About ZoeBike AI page.
+                  </p>
+                </div>
+
+                <div class="space-y-2.5">
+                  <span class="text-xs font-medium text-slate-500 block">Select Salon City:</span>
+                  <div class="flex flex-wrap gap-2">
+                    @for (city of salonCities; track city) {
+                      <button
+                        type="button"
+                        (click)="selectedSalonCity.set(city)"
+                        class="px-3.5 py-2 text-xs rounded-xl border transition-colors cursor-pointer whitespace-nowrap"
+                        [class]="
+                          selectedSalonCity() === city
+                            ? 'bg-seaglass border-seaglass text-white font-semibold'
+                            : 'bg-white border-slate-200 text-slate-700 hover:bg-mineral font-medium'
+                        "
+                      >
+                        {{ city }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Clean Light-Mode Booking Form -->
             <form
               [formGroup]="bookingForm"
               (ngSubmit)="submitTestRide()"
-              class="lg:col-span-5 bg-surface-container-lowest p-6 sm:p-7 rounded-[2rem] shadow-xl flex flex-col gap-4"
+              class="lg:col-span-5 bg-white p-7 sm:p-8 flex flex-col justify-between gap-5"
             >
-              <div class="flex items-center justify-between pb-1">
-                <span class="text-headline-sm font-semibold text-on-surface">Book Session</span>
-                <span class="text-label-sm text-secondary font-medium">
-                  Free · No commitment
-                </span>
-              </div>
-
-              <div class="space-y-1.5">
-                <span class="block text-label-sm text-on-surface-variant">
-                  Select Preferred Model
-                </span>
-                <div class="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    (click)="bookingModel.set('air')"
-                    class="px-3 py-2.5 rounded-xl text-label-md text-center transition-colors cursor-pointer"
-                    [class]="
-                      bookingModel() === 'air'
-                        ? 'bg-primary text-on-primary'
-                        : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
-                    "
-                  >
-                    Zoe Air 01
-                  </button>
-                  <button
-                    type="button"
-                    (click)="bookingModel.set('flow')"
-                    class="px-3 py-2.5 rounded-xl text-label-md text-center transition-colors cursor-pointer"
-                    [class]="
-                      bookingModel() === 'flow'
-                        ? 'bg-primary text-on-primary'
-                        : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
-                    "
-                  >
-                    Zoe Flow Wave
-                  </button>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                  <span class="font-display text-xl font-bold text-slate-900">
+                    Book a Test Ride
+                  </span>
+                  <span class="text-xs font-semibold text-seaglass">Free · 45 min</span>
                 </div>
-              </div>
 
-              <div class="space-y-1.5">
-                <label for="home-city-input" class="block text-label-sm text-on-surface-variant">
-                  Your City or Postal Code
-                </label>
-                <div class="relative">
+                <div class="space-y-1.5">
+                  <span class="block text-xs font-semibold text-slate-700">Preferred Model</span>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      (click)="bookingModel.set('air')"
+                      class="px-3 py-2.5 rounded-xl border text-xs font-semibold text-center transition-colors cursor-pointer"
+                      [class]="
+                        bookingModel() === 'air'
+                          ? 'bg-emerald-600 border-emerald-600 text-white'
+                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-mineral'
+                      "
+                    >
+                      Zoe Air 01
+                    </button>
+                    <button
+                      type="button"
+                      (click)="bookingModel.set('flow')"
+                      class="px-3 py-2.5 rounded-xl border text-xs font-semibold text-center transition-colors cursor-pointer"
+                      [class]="
+                        bookingModel() === 'flow'
+                          ? 'bg-emerald-600 border-emerald-600 text-white'
+                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-mineral'
+                      "
+                    >
+                      Zoe Flow Wave
+                    </button>
+                  </div>
+                </div>
+
+                <div class="space-y-1">
+                  <label for="home-city-input" class="block text-xs font-semibold text-slate-700">
+                    Your City or Postal Code
+                  </label>
+                  <div class="relative">
+                    <input
+                      id="home-city-input"
+                      formControlName="cityInput"
+                      class="w-full px-3.5 py-2.5 pr-10 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                      placeholder="e.g. 75003 Paris or 11211 Brooklyn"
+                      type="text"
+                    />
+                    <mat-icon
+                      class="!text-[18px] !w-[18px] !h-[18px] leading-none absolute right-3 top-2.5 text-slate-400"
+                    >
+                      location_on
+                    </mat-icon>
+                  </div>
+                </div>
+
+                <div class="space-y-1">
+                  <label for="home-email-input" class="block text-xs font-semibold text-slate-700">
+                    Contact Email
+                  </label>
                   <input
-                    id="home-city-input"
-                    formControlName="cityInput"
-                    class="w-full px-4 py-2.5 pr-10 rounded-xl bg-surface-container-low text-on-surface text-body-sm placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder="e.g. 75003 Paris or E1 6AN London"
-                    type="text"
+                    id="home-email-input"
+                    formControlName="email"
+                    class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    placeholder="name@domain.com"
+                    type="email"
                   />
-                  <mat-icon
-                    class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant text-[20px]"
-                  >
-                    location_on
-                  </mat-icon>
                 </div>
               </div>
 
-              <div class="space-y-1.5">
-                <label for="home-email-input" class="block text-label-sm text-on-surface-variant">
-                  Contact Email
-                </label>
-                <input
-                  id="home-email-input"
-                  formControlName="email"
-                  class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low text-on-surface text-body-sm placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  placeholder="name@domain.com"
-                  type="email"
-                />
-              </div>
-
-              <button
-                type="submit"
-                class="w-full mt-1 py-3.5 rounded-full text-label-lg shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
-                [class]="
-                  bookingConfirmed()
-                    ? 'bg-secondary text-on-secondary'
-                    : 'bg-primary text-on-primary hover:bg-primary-container'
-                "
-              >
-                @if (bookingConfirmed()) {
-                  <mat-icon class="material-symbols-outlined text-[18px]">done</mat-icon>
-                  <span>Slot Reserved! Check Inbox.</span>
-                } @else {
-                  <span>Reserve VIP Test Ride</span>
-                }
-              </button>
-
-              <p class="text-label-sm text-center text-on-surface-variant text-[11px]">
-                Includes complimentary helmet fitting and custom espresso tasting at our salon.
-              </p>
+              @if (bookingConfirmed()) {
+                <div
+                  class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 flex items-center justify-between gap-3"
+                >
+                  <div class="flex items-center gap-2 text-emerald-800 text-sm font-semibold">
+                    <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                      check_circle
+                    </mat-icon>
+                    <span>Slot reserved at {{ selectedSalonCity() }}.</span>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="bookingConfirmed.set(false)"
+                    class="text-xs font-medium text-emerald-800 underline cursor-pointer"
+                  >
+                    Book another
+                  </button>
+                </div>
+              } @else {
+                <div class="space-y-2.5">
+                  <button
+                    type="submit"
+                    class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                  >
+                    <mat-icon class="!text-[18px] !w-[18px] !h-[18px] leading-none">
+                      calendar_today
+                    </mat-icon>
+                    <span>Plan a Test Ride</span>
+                  </button>
+                  <p class="text-xs text-center text-slate-500">
+                    Includes complimentary sizing &amp; route demo at {{ selectedSalonCity() }}.
+                  </p>
+                </div>
+              }
             </form>
           </div>
-        </div>
-      </section>
 
-      <!-- CONFIDENCE & SUSTAINABILITY ACCENTS -->
-      <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 py-8 mb-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-secondary-container/40 flex items-center justify-center text-secondary shrink-0"
-            >
-              <mat-icon class="material-symbols-outlined text-[20px]">shield</mat-icon>
-            </div>
-            <div>
-              <h4 class="text-label-lg text-on-surface">5-Year Warranty</h4>
-              <p class="text-body-sm text-on-surface-variant text-[12px]">
-                Frame &amp; motor protection
+          <!-- 4-Column Confidence Strip -->
+          <div class="pt-8 border-t border-slate-200 grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="space-y-1">
+              <h4 class="font-display text-sm font-semibold text-slate-900">5-Year Frame Warranty</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Aluminum-magnesium structural &amp; motor coverage
               </p>
             </div>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-primary-fixed/40 flex items-center justify-center text-primary shrink-0"
-            >
-              <mat-icon class="material-symbols-outlined text-[20px]">replay_30</mat-icon>
+            <div class="space-y-1">
+              <h4 class="font-display text-sm font-semibold text-slate-900">30-Day Home Trial</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Ride daily routes risk-free with free salon pickup
+              </p>
             </div>
-            <div>
-              <h4 class="text-label-lg text-on-surface">30-Day Home Trial</h4>
-              <p class="text-body-sm text-on-surface-variant text-[12px]">Love it or free pickup</p>
+            <div class="space-y-1">
+              <h4 class="font-display text-sm font-semibold text-slate-900">
+                100% On-Device Privacy
+              </h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Local-first SQLite telemetry with zero server tracking
+              </p>
             </div>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-tertiary-fixed/60 flex items-center justify-center text-tertiary shrink-0"
-            >
-              <mat-icon class="material-symbols-outlined text-[20px]">local_shipping</mat-icon>
-            </div>
-            <div>
-              <h4 class="text-label-lg text-on-surface">Assembled Delivery</h4>
-              <p class="text-body-sm text-on-surface-variant text-[12px]">100% ready to ride box</p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-secondary-container/40 flex items-center justify-center text-secondary shrink-0"
-            >
-              <mat-icon class="material-symbols-outlined text-[20px]">handshake</mat-icon>
-            </div>
-            <div>
-              <h4 class="text-label-lg text-on-surface">Concierge Service</h4>
-              <p class="text-body-sm text-on-surface-variant text-[12px]">
-                On-demand city mechanics
+            <div class="space-y-1">
+              <h4 class="font-display text-sm font-semibold text-slate-900">Concierge Mechanics</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Gates Carbon belt drives &amp; city salon tune-ups
               </p>
             </div>
           </div>
@@ -871,63 +1056,61 @@ import {ZoeState} from '../../services/zoe-state';
             type="button"
             aria-label="Close comparison"
             (click)="showCompareModal.set(false)"
-            class="fixed inset-0 bg-on-background/40 backdrop-blur-sm cursor-default"
+            class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm cursor-default"
           ></button>
           <div
-            class="relative z-10 bg-surface-container-lowest rounded-3xl p-6 md:p-8 max-w-2xl w-full shadow-2xl space-y-5"
+            class="relative z-10 bg-white border border-slate-200 rounded-2xl p-6 md:p-8 max-w-2xl w-full space-y-5"
           >
             <button
               type="button"
               aria-label="Close comparison"
               (click)="showCompareModal.set(false)"
-              class="absolute top-6 right-6 w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface cursor-pointer"
+              class="absolute top-6 right-6 w-10 h-10 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-600 hover:text-slate-900 cursor-pointer"
             >
-              <mat-icon class="material-symbols-outlined text-[20px]">close</mat-icon>
+              <mat-icon class="!text-[20px] !w-[20px] !h-[20px] leading-none">close</mat-icon>
             </button>
 
             <div>
-              <span class="text-label-sm text-primary uppercase tracking-wider font-semibold">
-                Side-by-Side Geometry
-              </span>
-              <h3 class="text-headline-md text-on-surface font-semibold mt-1">
+              <p class="text-xs font-medium text-emerald-700">Side-by-Side Geometry</p>
+              <h3 class="font-display text-2xl font-bold text-slate-900 mt-1">
                 Zoe Air 01 vs. Zoe Flow Wave
               </h3>
             </div>
 
             <div class="overflow-x-auto">
-              <table class="w-full text-left border-collapse text-body-sm">
+              <table class="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr class="border-b border-surface-container text-label-md text-on-surface-variant">
+                  <tr class="border-b border-slate-200 text-xs font-semibold text-slate-500">
                     <th class="py-3 pr-4">Specification</th>
-                    <th class="py-3 px-4 text-primary font-semibold">Zoe Air 01</th>
-                    <th class="py-3 pl-4 text-secondary font-semibold">Zoe Flow Wave</th>
+                    <th class="py-3 px-4 text-emerald-700">Zoe Air 01</th>
+                    <th class="py-3 pl-4 text-ocean">Zoe Flow Wave</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-surface-container tabular-nums">
+                <tbody class="divide-y divide-slate-200 tabular-nums text-slate-700">
                   <tr>
-                    <td class="py-3 pr-4 text-on-surface-variant">Frame Geometry</td>
-                    <td class="py-3 px-4 font-medium">Diamond Minimalist</td>
-                    <td class="py-3 pl-4 font-medium">Deep Wave Low-Step</td>
+                    <td class="py-3 pr-4 text-slate-500">Frame Geometry</td>
+                    <td class="py-3 px-4 font-medium text-slate-900">Diamond Minimalist</td>
+                    <td class="py-3 pl-4 font-medium text-slate-900">Deep Wave Low-Step</td>
                   </tr>
                   <tr>
-                    <td class="py-3 pr-4 text-on-surface-variant">Standover Clearance</td>
-                    <td class="py-3 px-4 font-medium">46 cm</td>
-                    <td class="py-3 pl-4 font-medium">39 cm</td>
+                    <td class="py-3 pr-4 text-slate-500">Standover Clearance</td>
+                    <td class="py-3 px-4 font-medium text-slate-900">46 cm</td>
+                    <td class="py-3 pl-4 font-medium text-slate-900">39 cm</td>
                   </tr>
                   <tr>
-                    <td class="py-3 pr-4 text-on-surface-variant">Complete Weight</td>
-                    <td class="py-3 px-4 font-medium">13.9 – 14.2 kg</td>
-                    <td class="py-3 pl-4 font-medium">14.6 – 15.5 kg</td>
+                    <td class="py-3 pr-4 text-slate-500">Complete Weight</td>
+                    <td class="py-3 px-4 font-medium text-slate-900">13.9 – 14.2 kg</td>
+                    <td class="py-3 pl-4 font-medium text-slate-900">14.6 – 15.5 kg</td>
                   </tr>
                   <tr>
-                    <td class="py-3 pr-4 text-on-surface-variant">Max Range</td>
-                    <td class="py-3 px-4 font-medium">65 – 85 km</td>
-                    <td class="py-3 pl-4 font-medium">80 – 85 km</td>
+                    <td class="py-3 pr-4 text-slate-500">Max Range</td>
+                    <td class="py-3 px-4 font-medium text-slate-900">65 – 85 km</td>
+                    <td class="py-3 pl-4 font-medium text-slate-900">80 – 85 km</td>
                   </tr>
                   <tr>
-                    <td class="py-3 pr-4 text-on-surface-variant">Drivetrain</td>
-                    <td class="py-3 px-4 font-medium">Gates Carbon Belt</td>
-                    <td class="py-3 pl-4 font-medium">Gates Carbon Belt</td>
+                    <td class="py-3 pr-4 text-slate-500">Drivetrain</td>
+                    <td class="py-3 px-4 font-medium text-slate-900">Gates Carbon Belt</td>
+                    <td class="py-3 pl-4 font-medium text-slate-900">Gates Carbon Belt</td>
                   </tr>
                 </tbody>
               </table>
@@ -937,14 +1120,14 @@ import {ZoeState} from '../../services/zoe-state';
               <button
                 type="button"
                 (click)="showCompareModal.set(false)"
-                class="px-5 py-2.5 rounded-full bg-surface-container-high text-on-surface text-label-md cursor-pointer"
+                class="px-5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm font-semibold hover:bg-mineral cursor-pointer"
               >
                 Close
               </button>
               <button
                 type="button"
-                (click)="showCompareModal.set(false); configureModel('flow', 'Lilac Haze')"
-                class="px-6 py-2.5 rounded-full bg-primary text-on-primary text-label-md cursor-pointer"
+                (click)="showCompareModal.set(false); configureModel('flow', selectedFlowSwatch())"
+                class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold cursor-pointer"
               >
                 Open Full Customizer
               </button>
@@ -959,21 +1142,45 @@ export class Home {
   readonly state = inject(ZoeState);
   private readonly router = inject(Router);
   readonly images = ZOE_IMAGES;
+  readonly softwareSuite = SOFTWARE_SUITE;
+  readonly activeAppIndex = signal(0);
+  readonly activeApp = computed(() => this.softwareSuite[this.activeAppIndex()]);
+
+  readonly benefitFilter = signal<'all' | 'rider' | 'planet'>('all');
+  readonly filteredBenefits = computed(() => {
+    const mode = this.benefitFilter();
+    const all = [...RIDER_BENEFITS, ...PLANET_BENEFITS];
+    return mode === 'all' ? all : all.filter((b) => b.audience === mode);
+  });
+
+  readonly dailyKm = signal(10);
+  readonly co2SavedKgYear = computed(() => Math.round(this.dailyKm() * 240 * 0.21));
+  readonly moneySavedYear = computed(() => Math.round(this.dailyKm() * 240 * 0.45));
+  readonly caloriesPerWeek = computed(() => Math.round(this.dailyKm() * 5 * 32));
+  readonly activeMinsWeek = computed(() => Math.round(this.dailyKm() * 5 * 3));
+
+  onSliderChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const val = Number(target.value);
+    if (!Number.isNaN(val)) {
+      this.dailyKm.set(val);
+    }
+  }
 
   readonly airSwatches = [
-    {name: 'Rose Quartz', hex: '#E5B8A8'},
-    {name: 'Mint Sage', hex: '#B2CCC7'},
-    {name: 'Raw Linen', hex: '#E2DED9'},
+    {name: 'Canopy Emerald', hex: '#059669'},
+    {name: 'Deep Ocean', hex: '#0B4F78'},
+    {name: 'Pearl White', hex: '#FAF9F6'},
   ];
 
   readonly flowSwatches = [
-    {name: 'Lavender Mist', hex: '#D7C9E3'},
-    {name: 'Champagne Cream', hex: '#EADCC8'},
-    {name: 'Velvet Obsidian', hex: '#1C1C1A'},
+    {name: 'Sea-Glass', hex: '#1C6E63'},
+    {name: 'Mineral Slate', hex: '#EEF2F4'},
+    {name: 'Midnight Slate', hex: '#0F172A'},
   ];
 
-  readonly selectedAirSwatch = signal('Rose Quartz');
-  readonly selectedFlowSwatch = signal('Lavender Mist');
+  readonly selectedAirSwatch = signal('Canopy Emerald');
+  readonly selectedFlowSwatch = signal('Sea-Glass');
 
   readonly salonCities = [
     'Paris (Marais)',

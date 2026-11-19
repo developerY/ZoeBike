@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {RouterLink} from '@angular/router';
+import {SectionSubnav} from '../../components/section-subnav';
+import {INFO_TABS} from '../../data/ashbike-data';
 import {ZOE_IMAGES} from '../../data/zoebike-data';
 import {ZoeState} from '../../services/zoe-state';
 
@@ -56,13 +58,14 @@ const AI_PROFILES: Record<AiProfileKey, AiProfileSpec> = {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-about',
-  imports: [RouterLink, MatIconModule],
+  imports: [RouterLink, MatIconModule, SectionSubnav],
   template: `
     <div class="flex flex-col w-full">
+      <app-section-subnav [tabs]="infoTabs" ariaLabel="Info and About navigation" />
       <!-- WIDE HERO BANNER SECTION -->
       <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 pt-6 pb-10">
         <div
-          class="relative w-full aspect-[16/10] sm:aspect-[2/1] max-h-[460px] rounded-[2rem] overflow-hidden shadow-xl bg-inverse-surface"
+          class="relative w-full aspect-[16/10] sm:aspect-[2/1] max-h-[440px] rounded-2xl border border-outline-variant overflow-hidden bg-inverse-surface"
         >
           <img
             [src]="images.aboutBanner"
@@ -77,12 +80,9 @@ const AI_PROFILES: Record<AiProfileKey, AiProfileSpec> = {
           <div
             class="absolute inset-0 p-6 sm:p-10 lg:p-14 flex flex-col justify-end items-start"
           >
-            <span
-              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/90 text-primary text-label-sm uppercase tracking-wider mb-3 shadow-sm"
-            >
-              <mat-icon class="material-symbols-outlined text-[15px]">auto_awesome</mat-icon>
-              <span>About ZoeBike · AI-Driven Urban Mobility</span>
-            </span>
+            <p class="text-label-sm text-primary-fixed font-semibold mb-2">
+              About ZoeBike · AI-Driven Urban Mobility
+            </p>
 
             <h1 class="text-headline-xl text-on-primary max-w-3xl tracking-tight">
               Intelligence in Motion.<br />
@@ -102,11 +102,7 @@ const AI_PROFILES: Record<AiProfileKey, AiProfileSpec> = {
       <section class="w-full max-w-[1360px] mx-auto px-5 md:px-10 lg:px-16 py-10">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div class="lg:col-span-6 space-y-4">
-            <span
-              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/50 text-on-secondary-fixed-variant text-label-sm uppercase tracking-wider"
-            >
-              Our Manifesto
-            </span>
+            <p class="text-label-md text-secondary font-semibold">Our Manifesto</p>
             <h2 class="text-headline-lg text-on-surface tracking-tight">
               Quiet AI That Serves the Rider—Never the Other Way Around.
             </h2>
@@ -378,6 +374,7 @@ const AI_PROFILES: Record<AiProfileKey, AiProfileSpec> = {
 export class About {
   readonly state = inject(ZoeState);
   readonly images = ZOE_IMAGES;
+  readonly infoTabs = INFO_TABS;
 
   readonly profileList = Object.values(AI_PROFILES);
   readonly selectedProfileKey = signal<AiProfileKey>('city');
